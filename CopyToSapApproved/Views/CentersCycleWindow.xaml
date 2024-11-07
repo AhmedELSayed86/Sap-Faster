@@ -1,0 +1,249 @@
+﻿<UserControl
+    x:Class="CopyToSapApproved.Views.CentersCycleWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:local="clr-namespace:CopyToSapApproved.Views"
+    mc:Ignorable="d"
+    FlowDirection="RightToLeft">
+    <UserControl.Resources>
+        <Style
+            TargetType="RadioButton">
+            <Setter
+                Property="Template">
+                <Setter.Value>
+                    <ControlTemplate
+                        TargetType="RadioButton">
+                        <Border
+                            BorderBrush="DarkCyan"
+                            BorderThickness="0.5">
+                            <StackPanel
+                                Orientation="Horizontal">
+                                <!-- Outer Circle -->
+                                <Ellipse
+                                    Width="14"
+                                    Height="14"
+                                    Stroke="DarkCyan"
+                                    StrokeThickness="2"
+                                    Fill="Transparent" />
+                                <!-- Inner Dot (the checked indicator) -->
+                                <!-- Change this to any color you like -->
+                                <Ellipse
+                                    x:Name="Dot"
+                                    Margin="-14,0,0,0"
+                                    Width="7"
+                                    Height="7"
+                                    Fill="LawnGreen"
+                                    Visibility="Collapsed" />
+                                <!-- The content next to the RadioButton -->
+                                <ContentPresenter
+                                    Margin="2,0,0,0"
+                                    VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger
+                                Property="IsChecked"
+                                Value="True">
+                                <Setter
+                                    TargetName="Dot"
+                                    Property="Visibility"
+                                    Value="Visible" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition
+                Height="30" />
+            <RowDefinition
+                Height="50*" />
+        </Grid.RowDefinitions>
+        <StackPanel
+            x:Name="StackService"
+            Orientation="Horizontal">
+            <RadioButton
+                x:Name="ChBAll"
+                Margin="4,2,0,2"
+                FlowDirection="RightToLeft"
+                Foreground="#99F9F9"
+                Content="الكل"
+                IsChecked="True"
+                Click="ChBAll_Click" />
+            <RadioButton
+                x:Name="ChBInstallation"
+                Margin="4,2,0,2"
+                FlowDirection="RightToLeft"
+                Foreground="#99F9F9"
+                Content="تركيب"
+                Click="ChBAll_Click" />
+            <RadioButton
+                x:Name="ChBMaintenance"
+                Margin="4,2,0,2"
+                FlowDirection="RightToLeft"
+                Foreground="#99F9F9"
+                Content="صيانة"
+                Click="ChBAll_Click" />
+            <RadioButton
+                x:Name="ChBFreeOfCharge"
+                Margin="4,2,0,2"
+                FlowDirection="RightToLeft"
+                Foreground="#99F9F9"
+                Content="لا مقابل"
+                Click="ChBAll_Click" />
+            <RadioButton
+                x:Name="ChBNotFinish"
+                Margin="4,2,0,2"
+                FlowDirection="RightToLeft"
+                Foreground="#99F9F9"
+                Content="غ منتهي"
+                Click="ChBAll_Click" />
+            <Grid
+                Grid.Row="0"
+                Margin="4,2,0,2"
+                Width="65"
+                HorizontalAlignment="Left">
+                <TextBox
+                    x:Name="txtService"
+                    ToolTip="الخدمة"
+                    Margin="3"
+                    FontSize="14"
+                    TextWrapping="Wrap"
+                    VerticalScrollBarVisibility="Auto"
+                    ScrollViewer.CanContentScroll="True"
+                    PreviewTextInput="TxtNumber_PreviewTextInput"
+                    KeyDown="txtSearch_KeyDown" />
+                <TextBlock
+                    Focusable="True"
+                    IsHitTestVisible="False"
+                    Text="الخدمة"
+                    VerticalAlignment="Center"
+                    FontSize="12"
+                    FontWeight="Bold"
+                    Margin="10,0,0,0"
+                    Foreground="DarkGray">
+                    <TextBlock.Style>
+                        <Style
+                            TargetType="{x:Type TextBlock}">
+                            <Setter
+                                Property="Visibility"
+                                Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger
+                                    Binding="{Binding Text, ElementName=txtService}"
+                                    Value="">
+                                    <Setter
+                                        Property="Visibility"
+                                        Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style></TextBlock>
+            </Grid>
+            <Border
+                Grid.Column="2"
+                BorderBrush="Aquamarine"
+                BorderThickness="2">
+                <TextBlock
+                    x:Name="txtSearch"
+                    Grid.Column="1"
+                    Margin="5"
+                    Text="(0)"
+                    Background="#33333333"
+                    Foreground="#93F393"
+                    VerticalAlignment="Center" />
+            </Border>
+           
+        </StackPanel>
+        <Border
+            Margin="2"
+            BorderBrush="Chartreuse"
+            BorderThickness="3"
+            Grid.Row="1"
+            Grid.Column="1"
+            Background="Blue">
+            <ListBox
+                x:Name="ListData"
+                ItemsSource="{Binding CentersCycle}"
+                Foreground="White"
+                Background="#333333"
+                FontSize="16"
+                Height="Auto"
+                ScrollViewer.VerticalScrollBarVisibility="Visible"
+                ScrollViewer.HorizontalScrollBarVisibility="Visible"
+                SelectionChanged="ListData_SelectionChanged">
+                <ListBox.Style>
+                    <Style
+                        TargetType="ListBox">
+                        <Style.Triggers>
+                            <!-- Trigger للتحقق إذا كانت القائمة فارغة -->
+                            <Trigger
+                                Property="HasItems"
+                                Value="False">
+                                <Setter
+                                    Property="Template">
+                                    <Setter.Value>
+                                        <!-- ControlTemplate لعرض رسالة إذا كانت القائمة فارغة -->
+                                        <ControlTemplate
+                                            TargetType="ListBox">
+                                            <Border
+                                                BorderBrush="Gray"
+                                                BorderThickness="1"
+                                                Padding="10">
+                                                <TextBlock
+                                                    Text="لا توجد بيانات لعرضها"
+                                                    Foreground="White"
+                                                    FontSize="16"
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center" />
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </ListBox.Style>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition
+                                    Width="55" />
+                                <!-- هنا نضيف عمودا جديدا ليحتوي على الـ GridSplitter -->
+                                <ColumnDefinition
+                                    Width="Auto" />
+                                <ColumnDefinition
+                                    Width="70*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock
+                                x:Name="ListDataTextBlock1"
+                                Grid.Column="0"
+                                HorizontalAlignment="Right"
+                                Text="{Binding Path=[ID]}" />
+                            <!-- GridSplitter لإضافة خط فاصل بين العمودين -->
+                            <GridSplitter
+                                Grid.Column="1"
+                                Margin="5,0,0,0"
+                                Width="2"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Stretch"
+                                Background="Yellow"
+                                ResizeBehavior="PreviousAndNext" />
+                            <TextBlock
+                                x:Name="ListDataTextBlock2"
+                                Grid.Column="2"
+                                Text="{Binding Path=[ShortText]}"
+                                Margin="5,0,0,0" />
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Border>
+    </Grid>
+</UserControl>

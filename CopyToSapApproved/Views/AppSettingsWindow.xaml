@@ -1,0 +1,185 @@
+﻿<Window
+    x:Class="CopyToSapApproved.Views.AppSettingsWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:local="clr-namespace:CopyToSapApproved.Views"
+    mc:Ignorable="d"
+    Title="إعدادات التطبيق"
+    Height="500"
+    Width="400"
+    FlowDirection="RightToLeft"
+    WindowStartupLocation="CenterOwner"
+    Background="Black"
+    FontFamily="Time New Line"
+    Loaded="AppSettings_Loaded">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition
+                Width="50*" />
+            <ColumnDefinition
+                Width="50*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition
+                Height="50*" />
+            <RowDefinition
+                Height="50*" />
+            <RowDefinition
+                Height="50*" />
+            <RowDefinition
+                Height="50*" />
+            <RowDefinition
+                Height="50*" />
+            <RowDefinition
+                Height="50*" />
+            <RowDefinition
+                Height="50*" />
+            <RowDefinition
+                Height="50*" /> 
+            <RowDefinition
+                Height="50*" />
+            <!-- Row for ProgressBar -->
+            <RowDefinition
+                Height="Auto" />
+        </Grid.RowDefinitions>
+        <!-- Title -->
+        <TextBlock
+            Grid.Column="0"
+            Grid.Row="0"
+            Grid.ColumnSpan="2"
+            Text="إعدادات التطبيق"
+            Foreground="White"
+            FontSize="26"
+            FontWeight="Bold"
+            VerticalAlignment="Center"
+            TextAlignment="Center" />
+        <!-- Buttons -->
+        <Button
+            Grid.Column="0"
+            Grid.Row="1"
+            Content="تصدير قاعدة بيانات"
+            Style="{StaticResource ButtonStyle}"
+            Margin="5"
+            Click="ExportDatabase" />
+        <Button
+            Grid.Column="1"
+            Grid.Row="1"
+            Content="استيراد قاعدة بيانات"
+            Style="{StaticResource ButtonStyle}"
+            Margin="5"
+            Click="ImportDatabase" />
+        <Button
+            Grid.Column="0"
+            Grid.Row="2"
+            Content="رفع قطع الغيار"
+            Style="{StaticResource ButtonStyle}"
+            Margin="5"
+            Click="UploadSpareParts" />
+        <Button
+            Grid.Column="1"
+            Grid.Row="2"
+            Content="حذف قطع الغيار"
+            Style="{StaticResource ButtonStyle}"
+            Margin="5"
+            Click="ClearSparPart" />
+        <Button
+            Grid.Column="0"
+            Grid.Row="3"
+            Content="رفع الفنيين"
+            Style="{StaticResource ButtonStyle}"
+            Margin="5"
+            Click="UploadEmployee" />
+        <Button
+            Grid.Column="1"
+            Grid.Row="3"
+            Content="حذف الفنيين"
+            Style="{StaticResource ButtonStyle}"
+            Margin="5"
+            Click="ClearTecnical" />
+        <Button
+            Grid.Column="0"
+            Grid.Row="4"
+            Content="رفع التتميمات"
+            Style="{StaticResource ButtonStyle}"
+            Margin="5"
+            Click="UploadFinalNotes" />
+        <Button
+            Grid.Column="1"
+            Grid.Row="4"
+            Content="حذف التتميمات"
+            Style="{StaticResource ButtonStyle}"
+            Margin="5"
+            Click="ClearFinalNotes" />
+        <Button
+            Grid.Column="0"
+            Grid.Row="5"
+            Content="رفع خدمة المراكز"
+            Style="{StaticResource ButtonStyle}"
+            Margin="5"
+            Click="UploadCentersCycle" />
+        <Button
+            Grid.Column="1"
+            Grid.Row="5"
+            Content="حذف خدمة المراكز"
+            Style="{StaticResource ButtonStyle}"
+            Margin="5"
+            Click="ClearCentersCycle" />
+        <Button
+            Grid.Column="0"
+            Grid.Row="6"
+            Content="رفع الموديلات"
+            Style="{StaticResource ButtonStyle}"
+            Margin="5"
+            Click="UploadModels" />
+        <Button
+            Grid.Column="1"
+            Grid.Row="6"
+            Content="حذف الموديلات"
+            Style="{StaticResource ButtonStyle}"
+            Margin="5"
+            Click="ClearModels" />
+        <Button
+            Grid.Column="0"
+            Grid.Row="7"
+            Content="رفع ملاحظاتي"
+            Style="{StaticResource ButtonStyle}"
+            Margin="5"              />
+        <Button
+            Grid.Column="1"
+            Grid.Row="7"
+            Content="حذف ملاحظاتي"
+            Style="{StaticResource ButtonStyle}"
+            Margin="5"
+            Click="ClearMyNotes" />
+        <!-- Contact Info -->
+        <TextBlock
+            Grid.Column="0"
+            Grid.Row="8"
+            Text="أحمد السيد عبد الوهاب"
+            Foreground="White"
+            FontSize="16"
+            FontWeight="Bold"
+            TextAlignment="Center"
+            VerticalAlignment="Center" />
+        <TextBlock
+            Grid.Column="1"
+            Grid.Row="8"
+            Text="تليفون: 01025566365"
+            Foreground="White"
+            FontSize="16"
+            FontWeight="Bold"
+            TextAlignment="Center"
+            VerticalAlignment="Center" />
+        <ProgressBar
+            x:Name="OperationProgressBar"
+            Grid.Column="0"
+            Grid.Row="9"
+            Grid.ColumnSpan="2"
+            Height="20"
+            Margin="10"
+            Visibility="Collapsed"
+            IsIndeterminate="True" />
+    </Grid>
+</Window>

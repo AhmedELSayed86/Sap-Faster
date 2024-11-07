@@ -1,0 +1,59 @@
+﻿<UserControl
+    x:Class="CopyToSapApproved.DatePickerWithButtons"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:CopyToSapApproved"
+    mc:Ignorable="d"
+    d:DesignHeight="30"
+    d:DesignWidth="250">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition
+                Width="*" />
+            <ColumnDefinition
+                Width="Auto" />
+            <ColumnDefinition
+                Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <!-- DatePicker -->
+        <DatePicker
+            x:Name="datePicker"
+            Grid.Column="0"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Center"
+            SelectedDate="{Binding Path=SelectedDate, Mode=TwoWay, StringFormat='dd.MM.yyyy', UpdateSourceTrigger=PropertyChanged}">
+            <DatePicker.Resources>
+                <Style
+                    TargetType="DatePickerTextBox">
+                    <Setter
+                        Property="Control.Template">
+                        <Setter.Value>
+                            <ControlTemplate
+                                TargetType="DatePickerTextBox">
+                                <TextBox
+                                    x:Name="PART_TextBox"
+                                    Text="{Binding Path=SelectedDate, StringFormat='{}{0:dd.MM.yyyy}', RelativeSource={RelativeSource AncestorType=DatePicker}, Mode=TwoWay}" />
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </DatePicker.Resources>
+        </DatePicker>
+        <!-- Increase Day Button -->
+        <Button
+            x:Name="btnIncreaseDay"
+            Grid.Column="1"
+            Content="▲"
+            Width="20"
+            Click="btnIncreaseDay_Click" />
+        <!-- Decrease Day Button -->
+        <Button
+            x:Name="btnDecreaseDay"
+            Grid.Column="2"
+            Content="▼"
+            Width="20"
+            Click="btnDecreaseDay_Click" />
+    </Grid>
+</UserControl>

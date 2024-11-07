@@ -1,0 +1,363 @@
+﻿<UserControl
+    x:Class="CopyToSapApproved.Views.SparePartsSearchWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:local="clr-namespace:CopyToSapApproved.Views"
+    mc:Ignorable="d"
+    FlowDirection="RightToLeft">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition
+                Height="30" />
+            <RowDefinition
+                Height="50*" />
+        </Grid.RowDefinitions>
+        <StackPanel
+            Orientation="Horizontal">
+            <Grid
+                Grid.Row="0"
+                Width="80"
+                HorizontalAlignment="Left">
+                <TextBox
+                    x:Name="txtCode"
+                    ToolTip="كود القطعة"
+                    Margin="3"
+                    FontSize="16"
+                    TextWrapping="Wrap"
+                    VerticalScrollBarVisibility="Auto"
+                    ScrollViewer.CanContentScroll="True"
+                    PreviewTextInput="TxtNumber_PreviewTextInput"
+                    KeyDown="txtSearch_KeyDown" />
+                <TextBlock
+                    Focusable="True"
+                    IsHitTestVisible="False"
+                    Text="كود القطعة"
+                    VerticalAlignment="Center"
+                    FontSize="12"
+                    FontWeight="Bold"
+                    Margin="10,0,0,0"
+                    Foreground="DarkGray">
+                    <TextBlock.Style>
+                        <Style
+                            TargetType="{x:Type TextBlock}">
+                            <Setter
+                                Property="Visibility"
+                                Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger
+                                    Binding="{Binding Text, ElementName=txtCode}"
+                                    Value="">
+                                    <Setter
+                                        Property="Visibility"
+                                        Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style></TextBlock>
+            </Grid>
+            <Grid
+                Grid.Row="0"
+                Width="65"
+                HorizontalAlignment="Left">
+                <TextBox
+                    x:Name="txtDescriptionAR"
+                    ToolTip="اسم القطعة"
+                    Margin="3"
+                    FontSize="16"
+                    TextWrapping="Wrap"
+                    VerticalScrollBarVisibility="Auto"
+                    ScrollViewer.CanContentScroll="True"
+                    KeyDown="txtSearch_KeyDown" />
+                <TextBlock
+                    Focusable="True"
+                    IsHitTestVisible="False"
+                    Text="اسم القطعة"
+                    VerticalAlignment="Center"
+                    FontSize="12"
+                    FontWeight="Bold"
+                    Margin="10,0,0,0"
+                    Foreground="DarkGray">
+                    <TextBlock.Style>
+                        <Style
+                            TargetType="{x:Type TextBlock}">
+                            <Setter
+                                Property="Visibility"
+                                Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger
+                                    Binding="{Binding Text, ElementName=txtDescriptionAR}"
+                                    Value="">
+                                    <Setter
+                                        Property="Visibility"
+                                        Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style></TextBlock>
+            </Grid>
+            <Grid
+                Grid.Row="0"
+                Width="65"
+                HorizontalAlignment="Left">
+                <TextBox
+                    x:Name="txtModel"
+                    ToolTip="الموديل"
+                    Margin="3"
+                    FontSize="16"
+                    TextWrapping="Wrap"
+                    VerticalScrollBarVisibility="Auto"
+                    ScrollViewer.CanContentScroll="True"
+                    KeyDown="txtSearch_KeyDown" />
+                <TextBlock
+                    Focusable="True"
+                    IsHitTestVisible="False"
+                    Text="الموديل"
+                    VerticalAlignment="Center"
+                    FontSize="12"
+                    FontWeight="Bold"
+                    Margin="10,0,0,0"
+                    Foreground="DarkGray">
+                    <TextBlock.Style>
+                        <Style
+                            TargetType="{x:Type TextBlock}">
+                            <Setter
+                                Property="Visibility"
+                                Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger
+                                    Binding="{Binding Text, ElementName=txtModel}"
+                                    Value="">
+                                    <Setter
+                                        Property="Visibility"
+                                        Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style></TextBlock>
+            </Grid>
+            <Grid
+                Grid.Row="0"
+                Width="65"
+                HorizontalAlignment="Left">
+                <TextBox
+                    x:Name="txtGrope"
+                    ToolTip="المجموعة"
+                    Margin="3"
+                    FontSize="16"
+                    TextWrapping="Wrap"
+                    VerticalScrollBarVisibility="Auto"
+                    ScrollViewer.CanContentScroll="True"
+                    KeyDown="txtSearch_KeyDown" />
+                <TextBlock
+                    Focusable="True"
+                    IsHitTestVisible="False"
+                    Text="المجموعة"
+                    VerticalAlignment="Center"
+                    FontSize="12"
+                    FontWeight="Bold"
+                    Margin="10,0,0,0"
+                    Foreground="DarkGray">
+                    <TextBlock.Style>
+                        <Style
+                            TargetType="{x:Type TextBlock}">
+                            <Setter
+                                Property="Visibility"
+                                Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger
+                                    Binding="{Binding Text, ElementName=txtGrope}"
+                                    Value="">
+                                    <Setter
+                                        Property="Visibility"
+                                        Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style></TextBlock>
+            </Grid>
+            <Border
+                Grid.Column="3"
+                BorderBrush="Aquamarine"
+                BorderThickness="2">
+                <TextBlock
+                    x:Name="txtSearch"
+                    Grid.Column="1"
+                    Margin="5"
+                    Text="(0)"
+                    Background="#33333333"
+                    Foreground="#93F393"
+                    VerticalAlignment="Center" />
+            </Border>
+        </StackPanel>
+        <!-- هنا نضع الهيدر الثابت -->
+        <DataGrid
+            x:Name="DataGridData"
+            Grid.Row="1"
+            Grid.Column="0"
+            Grid.ColumnSpan="13"
+            ItemsSource="{Binding _sparePart}"
+            Foreground="White"
+            FontSize="16"
+            FontWeight="Bold"
+            FontFamily="Times New Roman"
+            AutoGenerateColumns="False"
+            HeadersVisibility="Column"
+            ScrollViewer.HorizontalScrollBarVisibility="Auto"
+            ScrollViewer.VerticalScrollBarVisibility="Auto"
+            SelectionChanged="DataGridData_SelectionChanged"
+            CanUserAddRows="False"
+            Background="Black"
+            RowBackground="#111"
+            AlternatingRowBackground="#333"
+            BorderBrush="LightGreen"
+            BorderThickness="3"
+            Margin="3,3,3,3"
+            HorizontalContentAlignment="Center"
+            VerticalContentAlignment="Center">
+            <!-- تحسين الهيدر -->
+            <DataGrid.ColumnHeaderStyle>
+                <Style
+                    TargetType="DataGridColumnHeader">
+                    <Setter
+                        Property="Background"
+                        Value="Black" />
+                    <Setter
+                        Property="Foreground"
+                        Value="White" />
+                    <Setter
+                        Property="FontSize"
+                        Value="18" />
+                    <Setter
+                        Property="FontWeight"
+                        Value="Bold" />
+                    <Setter
+                        Property="HorizontalContentAlignment"
+                        Value="Center" />
+                    <Setter
+                        Property="Padding"
+                        Value="10,5" />
+                </Style>
+            </DataGrid.ColumnHeaderStyle>
+            <!-- نمط الخلية مع خطوط الشبكة باللون الأخضر الفاتح -->
+            <DataGrid.CellStyle>
+                <Style
+                    TargetType="DataGridCell">
+                    <Setter
+                        Property="BorderBrush"
+                        Value="LightGreen" />
+                    <Setter
+                        Property="BorderThickness"
+                        Value="1" />
+                    <Setter
+                        Property="Margin"
+                        Value="-1" />
+                </Style>
+            </DataGrid.CellStyle>
+            <!-- الأعمدة المخصصة -->
+            <DataGrid.Columns>
+                <DataGridTemplateColumn
+                    Header="الكود">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBox
+                                Height="26"
+                                Width="75"
+                                Padding="2"
+                                IsReadOnly="True"
+                                Background="#00000033"
+                                Foreground="White" 
+                                SelectionBrush="Red"
+                                TextAlignment="Center"
+                                HorizontalAlignment="Center"
+                                Text="{Binding Path=[SapCode]}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate> 
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn
+                    Header="الاسم">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock
+                                Height="26"
+                                Padding="2"
+                                TextWrapping="Wrap"
+                                TextAlignment="Center"
+                                VerticalAlignment="Center"
+                                Text="{Binding Path=[DescriptionAR]}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn
+                    Header="الموديل">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock
+                                Height="Auto"
+                                Padding="2"
+                                TextAlignment="Center"
+                                VerticalAlignment="Center"
+                                Text="{Binding Path=[Model]}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn
+                    Header="سعر 1">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock
+                                Height="26"
+                                Width="85"
+                                Padding="2"
+                                VerticalAlignment="Center"
+                                TextAlignment="Center"
+                                Text="{Binding Path=[C1]}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn
+                    Header="سعر 2">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock
+                                Height="26"
+                                Width="85"
+                                Padding="2"
+                                VerticalAlignment="Center"
+                                TextAlignment="Center"
+                                Text="{Binding Path=[C2]}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn
+                    Header="تالف">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock
+                                Height="26"
+                                Width="55"
+                                Padding="2"
+                                VerticalAlignment="Center"
+                                TextAlignment="Center"
+                                Text="{Binding Path=[IsDamaged]}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn
+                    Header="الجروب">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock
+                                Height="26"
+                                Width="85"
+                                VerticalAlignment="Center"
+                                TextAlignment="Center"
+                                Text="{Binding Path=[Group_]}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>
