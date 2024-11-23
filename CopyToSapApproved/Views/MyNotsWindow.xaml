@@ -15,7 +15,7 @@
                 Height="*" />
         </Grid.RowDefinitions> 
         <!-- ربط مع خاصية HasNoData في ViewModel -->
-        <StackPanel
+        <WrapPanel
             Orientation="Horizontal">
             <Grid
                 Grid.Row="0"
@@ -97,6 +97,19 @@
                         </Style>
                     </TextBlock.Style></TextBlock>
             </Grid>
+            <StackPanel
+                Orientation="Horizontal">
+                <DatePicker
+                    x:Name="dpAlertDate"
+                    ToolTip="تاريخ التنبيه"
+                    Width="120"
+                    Margin="5" />
+                <TextBox
+                    x:Name="txtAlertTime"
+                    ToolTip="وقت التنبيه (hh:mm)"
+                    Width="60"
+                    Margin="5" />
+            </StackPanel>
             <Button
                 x:Name="BtnAddMyNote"
                 Margin="1,1"
@@ -149,7 +162,7 @@
                     Foreground="#93F393"
                     VerticalAlignment="Center" />
             </Border>
-        </StackPanel>
+        </WrapPanel>
         <!-- هنا نضع الهيدر الثابت -->
         <DataGrid
             x:Name="DataGridData"

@@ -13,9 +13,10 @@ public static class MessageService
     private static ConcurrentQueue<MyMessage> _messageQueue = [];
     private static bool _isShowingMessage = false;
 
-    public static async Task ShowMessage(string content , Brush color , int priority = 3 , bool isFlashing = false , int duration = 10000)
+    public static async Task ShowMessage(string content , Brush color , int priority = 3 , bool isFlashing = false , int duration = 3000)
     {
-        var message = new MyMessage { Content = content , Priority = priority , IsFlashing = isFlashing , Color = color , Duration = duration };
+        var message = new MyMessage
+        { Content = content , Priority = priority , IsFlashing = isFlashing , MyColor = color , Duration = duration };
 
         _messageQueue.Enqueue(message);
 
@@ -41,7 +42,7 @@ public static class MessageService
 
             if(messageToShow != null)
             {
-                await DisplayMessage(messageToShow.Content , messageToShow.Color , messageToShow.IsFlashing , messageToShow.Duration);
+                await DisplayMessage(messageToShow.Content , messageToShow.MyColor , messageToShow.IsFlashing , messageToShow.Duration);
 
                 // عدم انتظار مدة الرسالة بالكامل، بدلاً من ذلك التحقق من المدة المتبقية أثناء العرض
                 int elapsed = 0;

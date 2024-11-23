@@ -37,6 +37,15 @@ public class DatabaseHelper
         }
     }
 
+    public static void ExecuteQuery(string query , object parameters = null)
+    {
+        using var connection = new SQLiteConnection(_connectionString);
+        connection.Open();
+        var command = connection.CreateCommand();
+        command.CommandText = query;
+        command.ExecuteNonQuery();
+    }
+
     private void CreateTables()
     {
         using var connection = new SQLiteConnection(_connectionString);
@@ -96,7 +105,9 @@ public class DatabaseHelper
                         ID INTEGER PRIMARY KEY AUTOINCREMENT,
                         Title TEXT, 
                         MyNote TEXT,                        
-                        CreatedAt DATETIME                      
+                        CreatedAt DATETIME ,
+                        AlertTime DATETIME,
+                        Alerted Boolean
                     );";
 
         ExecuteNonQuery(connection , createEmployeeTable);
@@ -244,7 +255,7 @@ public class DatabaseHelper
         command.ExecuteNonQuery();
     }
 
-    public static bool AddMyNote(string title , string myNote)
+    public static bool AddMyNote(string title , string myNote , DateTime alertTime)
     {
         try
         {
@@ -252,7 +263,8 @@ public class DatabaseHelper
             {
                 { "Title", title },
                 { "MyNote", myNote },
-                { "CreatedAt", DateTime.UtcNow }
+                { "CreatedAt", DateTime.UtcNow },
+                { "AlertTime ", alertTime}
             };
 
             InsertIntoTable("MyNotes" , parameters);
@@ -287,7 +299,7 @@ public class DatabaseHelper
     }
 
     // دالة لتعديل صف في جدول MyNotes بناءً على معرف ID
-    public static bool UpdateMyNoteById(int id , string newTitle , string newNote)
+    public static bool UpdateMyNoteById(int id , string newTitle , string newNote , DateTime alertTime)
     {
         try
         {
@@ -295,7 +307,8 @@ public class DatabaseHelper
         {
             { "Title", newTitle },
             { "MyNote", newNote },
-            { "CreatedAt", DateTime.UtcNow } // إضافة حقل لتاريخ التعديل إن كان مطلوبًا
+            { "CreatedAt", DateTime.UtcNow }, // إضافة حقل لتاريخ التعديل إن كان مطلوبًا
+                { "AlertTime ", alertTime}
         };
 
             UpdateTableRow("MyNotes" , parameters , "ID" , id);
@@ -819,5 +832,41 @@ public class DatabaseHelper
 
             return result;
         }
+    }
+
+    public List<Dictionary<string , object>> GetPendingNotifications()
+    {
+        using var connection = new SQLiteConnection(_connectionString);
+        connection.Open();
+
+        var query = "SELECT * FROM MyNotes WHERE AlertTime <= @Now AND Alerted = 0";
+        using var command = new SQLiteCommand(query , connection);
+        command.Parameters.AddWithValue("@Now" , DateTime.Now);
+
+        using var reader = command.ExecuteReader();
+        var result = new List<Dictionary<string , object>>();
+
+        while(reader.Read())
+        {
+            var row = new Dictionary<string , object>();
+            for(var i = 0; i < reader.FieldCount; i++)
+            {
+                row[reader.GetName(i)] = reader.GetValue(i);
+            }
+            result.Add(row);
+        }
+
+        return result;
+    }
+
+    public void MarkNotificationAsShown(int id)
+    {
+        using var connection = new SQLiteConnection(_connectionString);
+        connection.Open();
+
+        var query = "UPDATE MyNotes SET Alerted = 1 WHERE ID = @Id";
+        using var command = new SQLiteCommand(query , connection);
+        command.Parameters.AddWithValue("@Id" , id);
+        command.ExecuteNonQuery();
     }
 }

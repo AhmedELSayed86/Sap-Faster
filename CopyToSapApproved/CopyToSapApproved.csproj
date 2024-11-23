@@ -104,8 +104,11 @@
     <Compile Include="Helper\DatabaseHelper.cs" />
     <Compile Include="Helper\ExcelHelper.cs" />
     <Compile Include="Helper\IsFinished,.cs" />
+    <Compile Include="Helper\NotifyIconHelper.cs" />
+    <Compile Include="Helper\OperationClass.cs" />
     <Compile Include="Helper\StartupManager.cs" />
     <Compile Include="Helper\SubstringConverter.cs" />
+    <Compile Include="Helper\TimerNotificationService.cs" />
     <Compile Include="Models\ActivitiesModels.cs" />
     <Compile Include="Models\CentersCycleModels.cs" />
     <Compile Include="Models\Employee.cs" />
@@ -122,6 +125,9 @@
     <Compile Include="Views\AppSettingsWindow.xaml.cs">
       <DependentUpon>AppSettingsWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\CalculatorAppWindow.xaml.cs">
+      <DependentUpon>CalculatorAppWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\CentersCycleWindow.xaml.cs">
       <DependentUpon>CentersCycleWindow.xaml</DependentUpon>
     </Compile>
@@ -136,6 +142,9 @@
     </Compile>
     <Compile Include="Views\MyNotsWindow.xaml.cs">
       <DependentUpon>MyNotsWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PopupNotificationWindow.xaml.cs">
+      <DependentUpon>PopupNotificationWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SparePartsSearchWindow.xaml.cs">
       <DependentUpon>SparePartsSearchWindow.xaml</DependentUpon>
@@ -152,6 +161,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\AppSettingsWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CalculatorAppWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -185,6 +198,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\MyNotsWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PopupNotificationWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -240,7 +257,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="ClosedXML">
-      <Version>0.104.1</Version>
+      <Version>0.104.2</Version>
     </PackageReference>
     <PackageReference Include="CommunityToolkit.Mvvm">
       <Version>8.3.2</Version>
@@ -249,7 +266,7 @@
       <Version>1.0.4</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces">
-      <Version>8.0.0</Version>
+      <Version>9.0.0</Version>
     </PackageReference>
     <PackageReference Include="System.Data.SQLite">
       <Version>1.0.119</Version>

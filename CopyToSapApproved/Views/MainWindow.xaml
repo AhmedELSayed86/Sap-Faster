@@ -1449,6 +1449,24 @@
                             <local:MyNotesWindow
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch" />
+                        </TabItem><TabItem
+                            x:Name="MyCalculator"
+                            Header="123"  
+                            Height="30"
+                            Background="Black">
+                            <TabItem.HeaderTemplate>
+                                <DataTemplate>
+                                    <TextBlock
+                                        Text="123"
+                                        VerticalAlignment="Center"
+                                        Margin="0,0,5,0"
+                                        FontSize="14"
+                                        Foreground="GreenYellow" />
+                                </DataTemplate>
+                            </TabItem.HeaderTemplate>
+                            <local:CalculatorAppWindow
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch" />
                         </TabItem>
                     </TabControl>
                 </ScrollViewer>

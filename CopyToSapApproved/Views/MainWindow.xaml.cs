@@ -53,7 +53,7 @@ public partial class MainWindow : Window
     private FinalNotesWindow finalNotesWindow;
     private CentersCycleWindow centersCyclesWindow;
     private EmployeeWindow employeeWindow;
-
+    private readonly TimerNotificationService _notificationService;
     //private readonly List<Employee> _employees; // List to hold employee data
 
     public MainWindow()
@@ -82,6 +82,17 @@ public partial class MainWindow : Window
         StartupManager.AddToStartup(appName , exePath);
 
         //_sparePart = []; 
+        //string alterTableQuery = "ALTER TABLE MyNotes ADD AlertTime DATETIME NULL;";
+        //DatabaseHelper.ExecuteQuery(alterTableQuery);
+
+        _notificationService = new TimerNotificationService();
+        _notificationService.Start();
+    }
+
+    protected override void OnClosed(EventArgs e)
+    {
+        _notificationService.Stop();
+        base.OnClosed(e);
     }
 
     private void MainWindows_Loaded(object sender , RoutedEventArgs e)

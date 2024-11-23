@@ -9,7 +9,7 @@ public class MyMessage : ObservableObject
     private string title;
     private int priority;
     private bool isFlashing;
-    private Color myColor;
+    private Brush myColor;
     private int duration;
 
     public string Content
@@ -35,7 +35,7 @@ public class MyMessage : ObservableObject
         set => SetProperty(ref isFlashing , value);
     }
 
-    public Color MyColor
+    public Brush MyColor
     {
         get => myColor;
         set => SetProperty(ref myColor , value);
