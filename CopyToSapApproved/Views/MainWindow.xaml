@@ -381,7 +381,8 @@
                             HorizontalContentAlignment="Center"
                             Foreground="#99F9F9"
                             Background="Black"
-                            KeyDown="TxtCounterZeker_KeyDown" IsReadOnly="True"/>
+                            KeyDown="TxtCounterZeker_KeyDown"
+                            IsReadOnly="True" />
                         <TextBlock
                             IsHitTestVisible="False"
                             FontFamily="Times New Roman"
@@ -804,7 +805,8 @@
                         x:Name="TxtCompletedBy"
                         Margin="1"
                         ToolTip="كود مدخل البيانات"
-                        HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
                         Foreground="#99F9F9"
                         Background="Black"
                         IsReadOnly="True" />
@@ -1430,7 +1432,7 @@
                             <local:ModelsModelsWindow
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch" />
-                        </TabItem> 
+                        </TabItem>
                         <TabItem
                             x:Name="MyNots"
                             Header="ملاحظاتي"
@@ -1449,9 +1451,10 @@
                             <local:MyNotesWindow
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch" />
-                        </TabItem><TabItem
+                        </TabItem>
+                        <TabItem
                             x:Name="MyCalculator"
-                            Header="123"  
+                            Header="123"
                             Height="30"
                             Background="Black">
                             <TabItem.HeaderTemplate>
@@ -1473,8 +1476,8 @@
             </Grid>
         </Border>
         <Border
-           x:Name="borderLblMessage"
-             BorderBrush="Black"
+            x:Name="borderLblMessage"
+            BorderBrush="Black"
             BorderThickness="2"
             Grid.Row="9"
             Grid.Column="0"
@@ -1484,17 +1487,36 @@
                 Grid.Column="0"
                 Grid.ColumnSpan="2"
                 Background="Black"
-                VerticalScrollBarVisibility="Auto">
-                <TextBlock
-                    x:Name="LblMessage"
-                    Text="بسم الله  الرحمن الرحيم"
-                    FontSize="14"
-                    Foreground="LawnGreen"
-                    FontWeight="Bold"
-                    FontFamily="Times New Roman"
-                    VerticalAlignment="Center"
-                    TextAlignment="Center"
-                    TextWrapping="Wrap" />
+                VerticalScrollBarVisibility="Auto" MouseDoubleClick="ScrollViewer_MouseDoubleClick">
+                <StackPanel
+                    Orientation="Horizontal"
+                   >
+                    <TextBlock
+                        x:Name="LblTitle"
+                        Text="الحمد لله"
+                        FontSize="14"
+                        Foreground="LawnGreen"
+                        FontWeight="Bold"
+                        FontFamily="Times New Roman"
+                        VerticalAlignment="Center"
+                        TextAlignment="Center"
+                        TextWrapping="Wrap" />
+                    <Label
+                        Content=":"
+                        Foreground="Yellow"
+                        Background ="Black"
+                        Padding="3" />
+                    <TextBlock
+                        x:Name="LblMessage"
+                        Text="بسم الله الرحمن الرحيم"
+                        FontSize="14"
+                        Foreground="LawnGreen"
+                        FontWeight="Bold"
+                        FontFamily="Times New Roman"
+                        VerticalAlignment="Center"
+                        TextAlignment="Center"
+                        TextWrapping="Wrap" />
+                </StackPanel>
             </ScrollViewer>
         </Border>
     </Grid>

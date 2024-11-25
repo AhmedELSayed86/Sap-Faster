@@ -177,5 +177,10 @@ namespace CopyToSapApproved.Views
                 await Task.Run(() => excelHelper.ClearTable("MyNotes"));
             });
         }
+        
+        private void DeleteDatabase(object sender , RoutedEventArgs e)
+        {
+            DatabaseHelper.DeleteDatabase();
+        }
     }
 }

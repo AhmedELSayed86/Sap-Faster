@@ -1,8 +1,11 @@
 ﻿using CopyToSapApproved.Controllers;
 using CopyToSapApproved.Helper;
+
 using System;
 using System.Collections.Generic;
+using System.Data.SQLite;
 using System.Globalization;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
@@ -12,7 +15,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
-using Application = System.Windows.Application;
+using System.Windows.Threading;
 
 namespace CopyToSapApproved.Views;
 
@@ -53,7 +56,8 @@ public partial class MainWindow : Window
     private FinalNotesWindow finalNotesWindow;
     private CentersCycleWindow centersCyclesWindow;
     private EmployeeWindow employeeWindow;
-    private readonly TimerNotificationService _notificationService;
+
+    private DispatcherTimer _notificationTimer;
     //private readonly List<Employee> _employees; // List to hold employee data
 
     public MainWindow()
@@ -85,14 +89,89 @@ public partial class MainWindow : Window
         //string alterTableQuery = "ALTER TABLE MyNotes ADD AlertTime DATETIME NULL;";
         //DatabaseHelper.ExecuteQuery(alterTableQuery);
 
-        _notificationService = new TimerNotificationService();
-        _notificationService.Start();
+        SetupNotificationTimer();
     }
 
-    protected override void OnClosed(EventArgs e)
+    private void SetupNotificationTimer()
     {
-        _notificationService.Stop();
-        base.OnClosed(e);
+        _notificationTimer = new DispatcherTimer
+        {
+            Interval = TimeSpan.FromMinutes(1) // تحقق كل دقيقة
+        };
+        _notificationTimer.Tick += CheckForNotifications;
+        _notificationTimer.Start();
+    }
+
+    private void CheckForNotifications(object sender , EventArgs e)
+    {
+        string resourcesPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
+        string dbFilePath = System.IO.Path.Combine(resourcesPath , "SAPFaster.db3");
+        string connectionString = $"Data Source={dbFilePath};Version=3;";
+
+        try
+        {
+            using(var conn = new SQLiteConnection(connectionString))
+            {
+                conn.Open();
+
+                // الاستعلام لجلب الملاحظات المؤهلة
+                string query = "SELECT Title, Content FROM MyNotes WHERE AlertTime <= @now AND Alerted = 0";
+                using(var cmd = new SQLiteCommand(query , conn))
+                {
+                    cmd.Parameters.AddWithValue("@now" , DateTime.Now);
+
+                    using(var reader = cmd.ExecuteReader())
+                    {
+                        // التحقق من وجود نتائج قبل القراءة
+                        if(!reader.HasRows)
+                        {
+                            // إذا لم تكن هناك ملاحظات، اخرج من الدالة
+                            return;
+                        }
+
+                        // قراءة البيانات وتنفيذ الإشعارات
+                        while(reader.Read())
+                        {
+                            string title = reader["Title"]?.ToString();
+                            string content = reader["Content"]?.ToString();
+
+                            // عرض الإشعار
+                            ShowNotification(title , content);
+
+                            // تحديث الحالة إلى "تم الإشعار"
+                            using(var updateCmd = new SQLiteCommand("UPDATE MyNotes SET Alerted = 1 WHERE Title = @title" , conn))
+                            {
+                                updateCmd.Parameters.AddWithValue("@title" , title);
+                                updateCmd.ExecuteNonQuery();
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        catch(SQLiteException ex)
+        {
+            // تسجيل أو عرض الأخطاء المتعلقة بقاعدة البيانات
+            Console.WriteLine($"SQLite Error: {ex.Message}");
+        }
+        catch(Exception ex)
+        {
+            // تسجيل أو عرض أي أخطاء عامة
+            Console.WriteLine($"Error: {ex.Message}");
+        }
+    }
+
+
+    private void ShowNotification(string title , string content)
+    {
+        // إنشاء نافذة الإشعار
+        var popup = new System.Windows.Controls.Primitives.Popup
+        {
+            Placement = System.Windows.Controls.Primitives.PlacementMode.Mouse ,
+            StaysOpen = false ,
+            Child = new PopupNotificationWindow(title , content)
+        };
+        popup.IsOpen = true;
     }
 
     private void MainWindows_Loaded(object sender , RoutedEventArgs e)
@@ -962,6 +1041,28 @@ public partial class MainWindow : Window
         else
         {
 
+        }
+    }
+
+    private void ScrollViewer_MouseDoubleClick(object sender , MouseButtonEventArgs e)
+    {
+        if(appWindow == null || !appWindow.IsVisible)
+        {
+            // إذا كانت النافذة غير موجودة أو غير مرئية، قم بإنشاءها وفتحها
+            appWindow = new PopupMessagesWindow( );
+            appWindow.Closed += OnAppWindowClosed; // الاشتراك في حدث الإغلاق
+            appWindow.Show();
+        }
+        else
+        {
+            // إذا كانت النافذة مفتوحة بالفعل
+            if(appWindow.WindowState == WindowState.Minimized)
+            {
+                // إذا كانت النافذة مصغرة، استعدها إلى الحالة الطبيعية
+                appWindow.WindowState = WindowState.Normal;
+            }
+            // قم بتنشيط النافذة لتظهر في المقدمة
+            appWindow.Activate();
         }
     }
 }

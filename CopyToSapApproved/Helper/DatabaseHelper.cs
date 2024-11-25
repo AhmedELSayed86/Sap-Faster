@@ -104,7 +104,7 @@ public class DatabaseHelper
                     CREATE TABLE IF NOT EXISTS MyNotes (
                         ID INTEGER PRIMARY KEY AUTOINCREMENT,
                         Title TEXT, 
-                        MyNote TEXT,                        
+                        Content TEXT,                        
                         CreatedAt DATETIME ,
                         AlertTime DATETIME,
                         Alerted Boolean
@@ -238,6 +238,31 @@ public class DatabaseHelper
         }
     }
 
+    /// <summary>
+    /// Deletes the database file permanently.
+    /// </summary>
+    public static void DeleteDatabase()
+    {
+        try
+        {
+            if(File.Exists(dbFilePath))
+            {
+                File.Delete(dbFilePath);
+                MessageService.ShowMessage("تم حذف قاعدة البيانات بنجاح." , Brushes.LawnGreen);
+            }
+            else
+            {
+                MessageService.ShowMessage("لم يتم حذف قاعدة." , Brushes.LawnGreen);
+            }
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine($"Error deleting database: {ex.Message}");
+            MessageService.ShowMessage("خطأ اثناء حذف قاعدة البيانات." , Brushes.LawnGreen);
+            // Optional: Log error to a file or logging system
+        }
+    }
+
     public static void InsertIntoTable(string tableName , Dictionary<string , object> parameters)
     {
         using var connection = new SQLiteConnection(_connectionString);
@@ -262,9 +287,10 @@ public class DatabaseHelper
             var parameters = new Dictionary<string , object>
             {
                 { "Title", title },
-                { "MyNote", myNote },
+                { "Content", myNote },
                 { "CreatedAt", DateTime.UtcNow },
-                { "AlertTime ", alertTime}
+                { "AlertTime ", alertTime},
+                { "Alerted ", false}
             };
 
             InsertIntoTable("MyNotes" , parameters);
@@ -306,9 +332,10 @@ public class DatabaseHelper
             var parameters = new Dictionary<string , object>
         {
             { "Title", newTitle },
-            { "MyNote", newNote },
+            { "Content", newNote },
             { "CreatedAt", DateTime.UtcNow }, // إضافة حقل لتاريخ التعديل إن كان مطلوبًا
-                { "AlertTime ", alertTime}
+                { "AlertTime ", alertTime},
+                { "Alerted ", false}
         };
 
             UpdateTableRow("MyNotes" , parameters , "ID" , id);
@@ -536,7 +563,7 @@ public class DatabaseHelper
 
         // إضافة شروط البحث بناءً على الإدخالات المتاحة         
         if(!string.IsNullOrEmpty(myNote))
-            query.Append(" AND MyNote LIKE @MyNote");
+            query.Append(" AND Content LIKE @Content");
 
         if(!string.IsNullOrEmpty(title))
             query.Append(" AND Title LIKE @Title");
@@ -546,7 +573,7 @@ public class DatabaseHelper
 
         // إضافة المعايير إلى الاستعلام
         if(!string.IsNullOrEmpty(myNote))
-            command.Parameters.AddWithValue("@MyNote" , "%" + myNote + "%");
+            command.Parameters.AddWithValue("@Content" , "%" + myNote + "%");
 
         if(!string.IsNullOrEmpty(title))
             command.Parameters.AddWithValue("@Title" , "%" + title + "%");
@@ -560,7 +587,7 @@ public class DatabaseHelper
             {
                 {"ID", reader["ID"] is DBNull ? null : reader.GetInt32(0) },
                 { "Title", reader["Title"] is DBNull ? null : reader.GetString(1) },
-                { "MyNote", reader["MyNote"] is DBNull ? null : reader.GetString(2) },
+                { "Content", reader["Content"] is DBNull ? null : reader.GetString(2) },
                 { "CreatedAt", reader["CreatedAt"] is DBNull ? null : reader.GetDateTime(3) }
             });
         }

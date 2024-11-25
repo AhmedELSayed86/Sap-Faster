@@ -143,6 +143,9 @@
     <Compile Include="Views\MyNotsWindow.xaml.cs">
       <DependentUpon>MyNotsWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\PopupMessagesWindow.xaml.cs">
+      <DependentUpon>PopupMessagesWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\PopupNotificationWindow.xaml.cs">
       <DependentUpon>PopupNotificationWindow.xaml</DependentUpon>
     </Compile>
@@ -198,6 +201,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\MyNotsWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PopupMessagesWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

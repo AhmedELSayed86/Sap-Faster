@@ -40,6 +40,8 @@
                 Height="50*" /> 
             <RowDefinition
                 Height="50*" />
+            <RowDefinition
+                Height="50*" />
             <!-- Row for ProgressBar -->
             <RowDefinition
                 Height="Auto" />
@@ -153,10 +155,17 @@
             Style="{StaticResource ButtonStyle}"
             Margin="5"
             Click="ClearMyNotes" />
-        <!-- Contact Info -->
+        <Button
+            Grid.Column="1"
+            Grid.Row="8"
+            Content="حذف قاعدة البيانات"
+            Style="{StaticResource ButtonStyle}"
+            Margin="5"
+            Click="DeleteDatabase" />
+        <!-- Contact Info DeleteDatabase-->
         <TextBlock
             Grid.Column="0"
-            Grid.Row="8"
+            Grid.Row="9"
             Text="أحمد السيد عبد الوهاب"
             Foreground="White"
             FontSize="16"
@@ -165,7 +174,7 @@
             VerticalAlignment="Center" />
         <TextBlock
             Grid.Column="1"
-            Grid.Row="8"
+            Grid.Row="9"
             Text="تليفون: 01025566365"
             Foreground="White"
             FontSize="16"
@@ -175,7 +184,7 @@
         <ProgressBar
             x:Name="OperationProgressBar"
             Grid.Column="0"
-            Grid.Row="9"
+            Grid.Row="10"
             Grid.ColumnSpan="2"
             Height="20"
             Margin="10"

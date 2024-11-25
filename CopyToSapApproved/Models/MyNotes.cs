@@ -10,7 +10,7 @@ internal class MyNotes : ObservableObject
     [Key]
     private int id;
     private string title;
-    private string myNote;
+    private string content;
     private DateTime createdAt;
     private DateTime alertTime;
     private bool alerted;
@@ -27,10 +27,10 @@ internal class MyNotes : ObservableObject
         set => SetProperty(ref title , value);
     }
 
-    public string MyNote
+    public string Content
     {
-        get => myNote;
-        set => SetProperty(ref myNote , value);
+        get => content;
+        set => SetProperty(ref content , value);
     }
 
     public DateTime CreatedAt

@@ -1,6 +1,7 @@
 ﻿using CopyToSapApproved.Models;
 using CopyToSapApproved.Views;
 using System.Collections.Concurrent;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -11,6 +12,8 @@ namespace CopyToSapApproved.Controllers;
 public static class MessageService
 {
     private static ConcurrentQueue<MyMessage> _messageQueue = [];
+    public static ObservableCollection<MyMessage> _messageList = [];
+   
     private static bool _isShowingMessage = false;
 
     public static async Task ShowMessage(string content , Brush color , int priority = 3 , bool isFlashing = false , int duration = 3000)

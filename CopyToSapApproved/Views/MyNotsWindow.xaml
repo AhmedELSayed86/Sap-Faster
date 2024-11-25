@@ -10,16 +10,17 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition
-                Height="50" />
+                Height="Auto" />
             <RowDefinition
-                Height="*" />
-        </Grid.RowDefinitions> 
+                Height="1*" />
+        </Grid.RowDefinitions>
         <!-- ربط مع خاصية HasNoData في ViewModel -->
         <WrapPanel
             Orientation="Horizontal">
             <Grid
                 Grid.Row="0"
-                Width="75"
+                Width="125"
+                Height="35"
                 HorizontalAlignment="Left">
                 <TextBox
                     x:Name="txtTitle"
@@ -57,9 +58,59 @@
                         </Style>
                     </TextBlock.Style></TextBlock>
             </Grid>
+            <StackPanel
+                Orientation="Horizontal">
+                <DatePicker
+                    x:Name="dpAlertDate"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    ToolTip="تاريخ التنبيه"
+                    Width="120"
+                    Margin="5" />
+                <Grid>
+                    <TextBox
+                        x:Name="txtAlertTime"
+                        ToolTip="وقت التنبيه (hh:mm)"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        Width="60"
+                        Margin="3"
+                        FontSize="16"
+                        TextWrapping="Wrap"
+                        VerticalScrollBarVisibility="Auto"
+                        ScrollViewer.CanContentScroll="True" />
+                    <TextBlock
+                        Focusable="True"
+                        IsHitTestVisible="False"
+                        Text="hh:mm"
+                        VerticalAlignment="Center"
+                        FontSize="12"
+                        FontWeight="Bold"
+                        Margin="10,0,0,0"
+                        Foreground="DarkGray">
+                        <TextBlock.Style>
+                            <Style
+                                TargetType="{x:Type TextBlock}">
+                                <Setter
+                                    Property="Visibility"
+                                    Value="Collapsed" />
+                                <Style.Triggers>
+                                    <DataTrigger
+                                        Binding="{Binding Text, ElementName=txtAlertTime}"
+                                        Value="">
+                                        <Setter
+                                            Property="Visibility"
+                                            Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style></TextBlock>
+                </Grid>
+            </StackPanel>
             <Grid
                 Grid.Row="0"
-                Width="130"
+                Width="200"
+                Height="60"
                 HorizontalAlignment="Left">
                 <TextBox
                     x:Name="txtMyNote"
@@ -97,19 +148,6 @@
                         </Style>
                     </TextBlock.Style></TextBlock>
             </Grid>
-            <StackPanel
-                Orientation="Horizontal">
-                <DatePicker
-                    x:Name="dpAlertDate"
-                    ToolTip="تاريخ التنبيه"
-                    Width="120"
-                    Margin="5" />
-                <TextBox
-                    x:Name="txtAlertTime"
-                    ToolTip="وقت التنبيه (hh:mm)"
-                    Width="60"
-                    Margin="5" />
-            </StackPanel>
             <Button
                 x:Name="BtnAddMyNote"
                 Margin="1,1"

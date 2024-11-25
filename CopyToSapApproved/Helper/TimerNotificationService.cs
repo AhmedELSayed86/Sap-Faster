@@ -41,7 +41,7 @@ public class TimerNotificationService
         foreach(var note in notes)
         {
             // عرض الإشعار
-            _notifyIconHelper.ShowNotification(note["Title"].ToString() , note["MyNote"].ToString());
+            _notifyIconHelper.ShowNotification(note["Title"].ToString() , note["Content"].ToString());
 
             // تحديث حالة الإشعار إلى "تم عرضه"
             _databaseHelper.MarkNotificationAsShown((int)note["ID"]);

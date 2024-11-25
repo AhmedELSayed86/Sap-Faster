@@ -29,7 +29,6 @@ public partial class MyNotesWindow : UserControl
         InitializeComponent();
         RefreshGrid();
         Counter();  
-        StartAlertTimer();
     }
 
     private void txtSearch_KeyDown(object sender , KeyEventArgs e)
@@ -128,7 +127,7 @@ public partial class MyNotesWindow : UserControl
             {
                 IsEditing = Convert.ToInt32($"{((dynamic)selectedItem)["ID"]}");
                 txtTitle.Text = $"{((dynamic)selectedItem)["Title"]}";
-                txtMyNote.Text = $"{((dynamic)selectedItem)["MyNote"]}";
+                txtMyNote.Text = $"{((dynamic)selectedItem)["Content"]}";
                 RefreshGrid();
             }
             else
@@ -148,33 +147,7 @@ public partial class MyNotesWindow : UserControl
         txtMyNote.Text = "";
     }
 
-    private void StartAlertTimer()
-    {
-        timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(30) };
-        timer.Tick += CheckAlerts;
-        timer.Start();
-    }
+   
 
-    private void CheckAlerts(object sender , EventArgs e)
-    {
-        var notesToAlert = _myNotes.Where(note => note.AlertTime <= DateTime.Now && !note.Alerted).ToList();
-
-        foreach(var note in notesToAlert)
-        {
-            System.Console.Beep(); // صوت التنبيه
-            ShowNotification(note.Title , note.MyNote);
-            note.Alerted = true;
-        }
-    }
-
-    private void ShowNotification(string title , string content)
-    {
-        var toastXml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText02);
-        var stringElements = toastXml.GetElementsByTagName("text");
-        stringElements[0].AppendChild(toastXml.CreateTextNode(title));
-        stringElements[1].AppendChild(toastXml.CreateTextNode(content));
-
-        var toast = new ToastNotification(toastXml);
-        ToastNotificationManager.CreateToastNotifier("MyNotesApp").Show(toast);
-    }
+    
 }
