@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using DocumentFormat.OpenXml.Drawing;
 using System;
 using System.ComponentModel.DataAnnotations;
 
@@ -13,7 +12,7 @@ internal class MyNotes : ObservableObject
     private string content;
     private DateTime createdAt;
     private DateTime alertTime;
-    private bool alerted;
+    private int alerted;
     
     public int ID
     {
@@ -45,7 +44,7 @@ internal class MyNotes : ObservableObject
         set => SetProperty(ref alertTime , value);
     }
 
-    public bool Alerted
+    public int Alerted
     {
         get => alerted;
         set => SetProperty(ref alerted , value);

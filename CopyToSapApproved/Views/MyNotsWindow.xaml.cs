@@ -1,8 +1,10 @@
 ﻿using CopyToSapApproved.Controllers;
 using CopyToSapApproved.Helper;
+using CopyToSapApproved.Models;
 using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection.Emit;
 using System.Text.RegularExpressions;
@@ -20,15 +22,34 @@ namespace CopyToSapApproved.Views;
 public partial class MyNotesWindow : UserControl
 {
     private readonly DatabaseHelper _databaseHelper = new();
-    private List<Dictionary<string , object>> _myNotes;
+    private ObservableCollection<MyNotes> _myNotes;
     private int IsEditing = 0;
-    private DispatcherTimer timer;
+    private DispatcherTimer _dbCheckTimer;
 
     public MyNotesWindow()
     {
         InitializeComponent();
         RefreshGrid();
-        Counter();  
+        Counter();
+
+        // إعداد المؤقت للتحقق من التغييرات في قاعدة البيانات كل 5 ثوانٍ
+        _dbCheckTimer = new DispatcherTimer
+        {
+            Interval = TimeSpan.FromMinutes(1)
+        };
+        _dbCheckTimer.Tick += (s , e) => CheckForUpdates();
+        _dbCheckTimer.Start();
+    }
+
+    private void CheckForUpdates()
+    {
+        var latestData = _databaseHelper.GetAllData("MyNotes");
+
+        // تحقق من الفرق بين البيانات الحالية والجديدة
+        if(latestData.Count != _myNotes.Count)
+        {
+            RefreshGrid();
+        }
     }
 
     private void txtSearch_KeyDown(object sender , KeyEventArgs e)
@@ -50,13 +71,38 @@ public partial class MyNotesWindow : UserControl
 
     private void RefreshGrid()
     {
-        DataGridData.ItemsSource = _myNotes = _databaseHelper.GetAllData("MyNotes");
+        var notes = _databaseHelper.GetAllData("MyNotes")
+         .Select(data => new MyNotes
+         {
+             ID = Convert.ToInt32(data["ID"]) ,
+             Title = data["Title"].ToString() ,
+             Content = data["Content"].ToString() ,
+             CreatedAt = DateTime.Parse(data["CreatedAt"].ToString()) ,
+             AlertTime = DateTime.Parse(data["AlertTime"].ToString()) ,
+             Alerted = Convert.ToInt32(data["Alerted"])
+         }).ToList();
+
+        _myNotes = new ObservableCollection<MyNotes>(notes);
+        DataGridData.ItemsSource = _myNotes;
+        Counter();
     }
 
     private void SearchData()
     {
-        DataGridData.ItemsSource = _myNotes = DatabaseHelper.SearchMyNotes(txtTitle.Text , txtMyNote.Text);
-        Counter(); 
+        var notes = DatabaseHelper.SearchMyNotes(txtTitle.Text , txtContent.Text)
+        .Select(data => new MyNotes
+        {
+            ID = Convert.ToInt32(data["ID"]) ,
+            Title = data["Title"].ToString() ,
+            Content = data["Content"].ToString() ,
+            CreatedAt = DateTime.Parse(data["CreatedAt"].ToString()) ,
+            AlertTime = DateTime.Parse(data["AlertTime"].ToString()) ,
+            Alerted = Convert.ToInt32(data["Alerted"])
+        }).ToList();
+
+        _myNotes = new ObservableCollection<MyNotes>(notes);
+        DataGridData.ItemsSource = _myNotes;
+        Counter();
     }
 
     private void DataGridData_SelectionChanged(object sender , SelectionChangedEventArgs e)
@@ -68,22 +114,22 @@ public partial class MyNotesWindow : UserControl
     {
         if(string.IsNullOrWhiteSpace(txtTitle.Text))
         {
-            MessageService.ShowMessage("ملحوظة: عنوان الملحوظة فارغ." , Brushes.Yellow);
+            _=MyMessageService.ShowMessage("ملحوظة: عنوان الملحوظة فارغ." , Brushes.Yellow);
             txtTitle.Focus();
             return;
         }
 
-        if(string.IsNullOrWhiteSpace(txtMyNote.Text))
+        if(string.IsNullOrWhiteSpace(txtContent.Text))
         {
-            MessageService.ShowMessage("ملحوظة: نص الملحوظة فارغ." , Brushes.Yellow);
-            txtMyNote.Focus();
+            _=MyMessageService.ShowMessage("ملحوظة: نص الملحوظة فارغ." , Brushes.Yellow);
+            txtContent.Focus();
             return;
         }
 
         DateTime alertDate = dpAlertDate.SelectedDate ?? DateTime.MinValue;
         if(!DateTime.TryParse(txtAlertTime.Text , out var alertTime) || alertDate == DateTime.MinValue)
         {
-            MessageService.ShowMessage("ملحوظة: يجب إدخال تاريخ ووقت التنبيه بشكل صحيح." , Brushes.Yellow);
+            _=MyMessageService.ShowMessage("ملحوظة: يجب إدخال تاريخ ووقت التنبيه بشكل صحيح." , Brushes.Yellow);
             return;
         }
 
@@ -91,14 +137,14 @@ public partial class MyNotesWindow : UserControl
 
         if(IsEditing > 0)
         {
-            DatabaseHelper.UpdateMyNoteById(IsEditing , txtTitle.Text , txtMyNote.Text , fullAlertTime);
+            DatabaseHelper.UpdateMyNoteById(IsEditing , txtTitle.Text , txtContent.Text , fullAlertTime);
             RefreshGrid();
             ClearTextBox();
             IsEditing = 0;
             return;
         }
 
-        DatabaseHelper.AddMyNote(txtTitle.Text , txtMyNote.Text , fullAlertTime);
+        DatabaseHelper.AddMyNote(txtTitle.Text , txtContent.Text , fullAlertTime);
         ClearTextBox();
         RefreshGrid();
     }
@@ -122,29 +168,31 @@ public partial class MyNotesWindow : UserControl
     {
         try
         {
-            var selectedItem = DataGridData.SelectedItem;
-            if(selectedItem is not null)
+            var selectedItem = DataGridData.SelectedItem as MyNotes;
+            if(selectedItem != null)
             {
-                IsEditing = Convert.ToInt32($"{((dynamic)selectedItem)["ID"]}");
-                txtTitle.Text = $"{((dynamic)selectedItem)["Title"]}";
-                txtMyNote.Text = $"{((dynamic)selectedItem)["Content"]}";
+                IsEditing = selectedItem.ID;
+                txtTitle.Text = selectedItem.Title;
+                txtContent.Text = selectedItem.Content;
+                dpAlertDate.Text = selectedItem.AlertTime.ToString(); txtAlertTime.Text = selectedItem.AlertTime.ToShortTimeString();
                 RefreshGrid();
             }
             else
             {
-                MessageService.ShowMessage("يجب تحديد ملحوظة اولا." , Brushes.Green);
+                _ = MyMessageService.ShowMessage("يجب تحديد ملحوظة أولا." , Brushes.Green);
             }
         }
         catch(Exception ex)
         {
-            MessageService.ShowMessage("يجب تحديد ملحوظة اولا.\n" + ex.Message , Brushes.IndianRed);
+            _ = MyMessageService.ShowMessage("خطأ: " + ex.Message , Brushes.IndianRed);
         }
     }
+
 
     private void ClearTextBox()
     {
         txtTitle.Text = "";
-        txtMyNote.Text = "";
+        txtContent.Text = "";
     }
 
    

@@ -1490,7 +1490,7 @@
                 VerticalScrollBarVisibility="Auto" MouseDoubleClick="ScrollViewer_MouseDoubleClick">
                 <StackPanel
                     Orientation="Horizontal"
-                   >
+                  Margin="2,0" >
                     <TextBlock
                         x:Name="LblTitle"
                         Text="الحمد لله"

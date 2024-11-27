@@ -107,7 +107,7 @@ public class DatabaseHelper
                         Content TEXT,                        
                         CreatedAt DATETIME ,
                         AlertTime DATETIME,
-                        Alerted Boolean
+                        Alerted INTEGER
                     );";
 
         ExecuteNonQuery(connection , createEmployeeTable);
@@ -248,36 +248,19 @@ public class DatabaseHelper
             if(File.Exists(dbFilePath))
             {
                 File.Delete(dbFilePath);
-                MessageService.ShowMessage("تم حذف قاعدة البيانات بنجاح." , Brushes.LawnGreen);
+                _ = MyMessageService.ShowMessage("تم حذف قاعدة البيانات بنجاح. " + dbFilePath , Brushes.LawnGreen);
             }
             else
             {
-                MessageService.ShowMessage("لم يتم حذف قاعدة." , Brushes.LawnGreen);
+                _ = MyMessageService.ShowMessage("لم يتم حذف قاعدة." , Brushes.LawnGreen);
             }
         }
         catch(Exception ex)
         {
             Console.WriteLine($"Error deleting database: {ex.Message}");
-            MessageService.ShowMessage("خطأ اثناء حذف قاعدة البيانات." , Brushes.LawnGreen);
+            _ = MyMessageService.ShowMessage("خطأ اثناء حذف قاعدة البيانات." , Brushes.LawnGreen);
             // Optional: Log error to a file or logging system
         }
-    }
-
-    public static void InsertIntoTable(string tableName , Dictionary<string , object> parameters)
-    {
-        using var connection = new SQLiteConnection(_connectionString);
-        connection.Open();
-
-        var columns = string.Join(", " , parameters.Keys);
-        var values = string.Join(", " , parameters.Keys.Select(key => $"@{key}"));
-        var insertQuery = $"INSERT INTO {tableName} ({columns}) VALUES ({values})";
-
-        using var command = new SQLiteCommand(insertQuery , connection);
-        foreach(var param in parameters)
-        {
-            command.Parameters.AddWithValue($"@{param.Key}" , param.Value ?? DBNull.Value);
-        }
-        command.ExecuteNonQuery();
     }
 
     public static bool AddMyNote(string title , string myNote , DateTime alertTime)
@@ -289,19 +272,47 @@ public class DatabaseHelper
                 { "Title", title },
                 { "Content", myNote },
                 { "CreatedAt", DateTime.UtcNow },
-                { "AlertTime ", alertTime},
-                { "Alerted ", false}
+                { "AlertTime", alertTime},
+                { "Alerted", 0}
             };
 
             InsertIntoTable("MyNotes" , parameters);
 
-            MessageService.ShowMessage("تم اضافة الملحوظة بنجاح." , Brushes.LawnGreen);
+            _ = MyMessageService.ShowMessage("تم اضافة الملحوظة بنجاح." , Brushes.LawnGreen);
             return true;
         }
         catch(Exception ex)
         {
             MessageBox.Show("حدث خطأ أثناء معالجة الملف: " + ex.Message);
             return false;
+        }
+    }
+
+    public static void InsertIntoTable(string tableName , Dictionary<string , object> parameters)
+    {
+        try
+        {
+            using var connection = new SQLiteConnection(_connectionString);
+            connection.Open();
+
+            var columns = string.Join(", " , parameters.Keys);
+            var values = string.Join(", " , parameters.Keys.Select(key => $"@{key}"));
+            var insertQuery = $"INSERT INTO {tableName} ({columns}) VALUES ({values})";
+
+            using var command = new SQLiteCommand(insertQuery , connection);
+            foreach(var param in parameters)
+            {
+                command.Parameters.AddWithValue($"@{param.Key}" , param.Value ?? DBNull.Value);
+            }
+            command.ExecuteNonQuery();
+        }
+        catch(SQLiteException sqlEx)
+        {
+            MessageBox.Show($"خطأ في SQLite: {sqlEx.Message}");
+        }
+        catch(Exception ex)
+        {
+            MessageBox.Show($"خطأ عام: {ex.Message}");
         }
     }
 
@@ -334,13 +345,13 @@ public class DatabaseHelper
             { "Title", newTitle },
             { "Content", newNote },
             { "CreatedAt", DateTime.UtcNow }, // إضافة حقل لتاريخ التعديل إن كان مطلوبًا
-                { "AlertTime ", alertTime},
-                { "Alerted ", false}
+                { "AlertTime", alertTime},
+                { "Alerted", 0}
         };
 
             UpdateTableRow("MyNotes" , parameters , "ID" , id);
 
-            MessageService.ShowMessage($"تم تعديل الملحوظة برقم ID: {id} بنجاح." , Brushes.LawnGreen);
+            _ = MyMessageService.ShowMessage($"تم تعديل الملحوظة برقم ID: {id} بنجاح." , Brushes.LawnGreen);
             return true;
         }
         catch(Exception ex)
@@ -468,7 +479,7 @@ public class DatabaseHelper
             using var command = new SQLiteCommand(query , connection);
             command.Parameters.AddWithValue("@SapCode" , SapCode);
 
-            MessageService.ShowMessage($"Executing Query: {query} with SapCode={SapCode}" , Brushes.LawnGreen);
+            _ = MyMessageService.ShowMessage($"Executing Query: {query} with SapCode={SapCode}" , Brushes.LawnGreen);
 
             using var reader = command.ExecuteReader();
             if(reader.Read())  // قراءة الصف الأول المطابق فقط
@@ -478,12 +489,12 @@ public class DatabaseHelper
         }
         catch(Exception ex)
         {
-            MessageService.ShowMessage($"Error: {ex.Message}" , Brushes.IndianRed);
+            _ = MyMessageService.ShowMessage($"Error: {ex.Message}" , Brushes.IndianRed);
         }
 
         if(descriptionAR == null)
         {
-            MessageService.ShowMessage("لا يوجد بيانات تطابق الشرط." , Brushes.IndianRed);
+            _ = MyMessageService.ShowMessage("لا يوجد بيانات تطابق الشرط." , Brushes.IndianRed);
         }
 
         return descriptionAR;

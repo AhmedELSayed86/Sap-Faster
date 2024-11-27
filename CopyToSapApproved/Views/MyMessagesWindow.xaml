@@ -1,18 +1,18 @@
 ﻿<Window
-    x:Class="CopyToSapApproved.Views.PopupMessagesWindow"
+    x:Class="CopyToSapApproved.Views.MyMessagesWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:local="clr-namespace:CopyToSapApproved.Views"
     mc:Ignorable="d"
-    Title="PopupMessagesWindow"
+    Title="MyMessagesWindow"
     Height="500"
     Width="400"
     FlowDirection="RightToLeft"
     WindowStartupLocation="CenterOwner"
     Background="Black"
-    FontFamily="Time New Line"
+    FontFamily="Time New Line" FontSize="16"
     Loaded="AppSettings_Loaded">
     <Grid>
         <Grid.RowDefinitions>
@@ -36,7 +36,8 @@
             VerticalScrollBarVisibility="Auto"
             Margin="10">
             <ItemsControl
-                Name="CollectionMessages">
+                Name="CollectionMessages"
+                ItemsSource="{Binding _Messages}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <StackPanel
@@ -44,7 +45,7 @@
                             Margin="5">
                             <TextBlock
                                 Text="{Binding Title}"
-                                Foreground="{Binding MyColor}"
+                                Foreground="LawnGreen"
                                 Background="Black"
                                 Padding="5" />
                             <TextBlock
@@ -54,7 +55,7 @@
                                 Padding="5,0,5,0" />
                             <TextBox
                                 Text="{Binding Content}"
-                                Foreground="{Binding MyColor}"
+                                Foreground="Aquamarine"
                                 Background="Black"
                                 IsReadOnly="False"
                                 Padding="5" />

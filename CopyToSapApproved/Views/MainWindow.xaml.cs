@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Globalization;
 using System.IO;
+using System.Media;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
@@ -24,8 +25,7 @@ namespace CopyToSapApproved.Views;
 /// </summary>
 public partial class MainWindow : Window
 {
-    private string isTableName = "";
-    private string isPageTitle = "";
+    private readonly string isTableName = "";
 
     public string CentersCycleID = "";
     public string CentersCycleShortText = "";
@@ -44,18 +44,10 @@ public partial class MainWindow : Window
     private readonly DatabaseHelper _databaseHelper = new();
 
     private readonly List<Dictionary<string , object>> employee;
-    private readonly List<Dictionary<string , object>> finalNotes;
     private readonly List<Dictionary<string , object>> centersCycle;
-
 
     //private readonly ExcelHelper excelHelper = new(_databaseHelper);
     private Window appWindow;
-
-    // متغير لتخزين المرجع إلى SparePartsWindow المفتوحة
-    private SparePartsWindow sparePartsWindow;
-    private FinalNotesWindow finalNotesWindow;
-    private CentersCycleWindow centersCyclesWindow;
-    private EmployeeWindow employeeWindow;
 
     private DispatcherTimer _notificationTimer;
     //private readonly List<Employee> _employees; // List to hold employee data
@@ -110,69 +102,86 @@ public partial class MainWindow : Window
 
         try
         {
-            using(var conn = new SQLiteConnection(connectionString))
+            using var conn = new SQLiteConnection(connectionString);
+            conn.Open();
+
+            // الاستعلام لجلب الملاحظات المؤهلة
+            string query = "SELECT * FROM MyNotes WHERE AlertTime <= @now AND Alerted < 3";
+            using var cmd = new SQLiteCommand(query , conn);
+            cmd.Parameters.AddWithValue("@now" , DateTime.Now);
+
+            using var reader = cmd.ExecuteReader();
+            // التحقق من وجود نتائج قبل القراءة
+            if(!reader.HasRows)
             {
-                conn.Open();
+                // إذا لم تكن هناك ملاحظات، اخرج من الدالة
+                return;
+            }
 
-                // الاستعلام لجلب الملاحظات المؤهلة
-                string query = "SELECT Title, Content FROM MyNotes WHERE AlertTime <= @now AND Alerted = 0";
-                using(var cmd = new SQLiteCommand(query , conn))
-                {
-                    cmd.Parameters.AddWithValue("@now" , DateTime.Now);
+            // قراءة البيانات وتنفيذ الإشعارات
+            while(reader.Read())
+            {
+                string id = reader["ID"]?.ToString();
+                string title = reader["Title"]?.ToString();
+                string content = reader["Content"]?.ToString();
+                string alerted = reader["Alerted"]?.ToString();
+                // عرض الإشعار
+                ShowNotification(title , content);
 
-                    using(var reader = cmd.ExecuteReader())
-                    {
-                        // التحقق من وجود نتائج قبل القراءة
-                        if(!reader.HasRows)
-                        {
-                            // إذا لم تكن هناك ملاحظات، اخرج من الدالة
-                            return;
-                        }
+                int.TryParse(alerted , out int alertedToint);
 
-                        // قراءة البيانات وتنفيذ الإشعارات
-                        while(reader.Read())
-                        {
-                            string title = reader["Title"]?.ToString();
-                            string content = reader["Content"]?.ToString();
+                alertedToint++;
 
-                            // عرض الإشعار
-                            ShowNotification(title , content);
-
-                            // تحديث الحالة إلى "تم الإشعار"
-                            using(var updateCmd = new SQLiteCommand("UPDATE MyNotes SET Alerted = 1 WHERE Title = @title" , conn))
-                            {
-                                updateCmd.Parameters.AddWithValue("@title" , title);
-                                updateCmd.ExecuteNonQuery();
-                            }
-                        }
-                    }
-                }
+                // تحديث الحالة إلى "تم الإشعار"
+                using var updateCmd = new SQLiteCommand("UPDATE MyNotes SET Alerted = @alerted WHERE ID = @id" , conn);
+                updateCmd.Parameters.AddWithValue("@alerted" , alertedToint);
+                updateCmd.Parameters.AddWithValue("@id" , id);
+                updateCmd.ExecuteNonQuery();
             }
         }
         catch(SQLiteException ex)
         {
-            // تسجيل أو عرض الأخطاء المتعلقة بقاعدة البيانات
-            Console.WriteLine($"SQLite Error: {ex.Message}");
+            // تسجيل أو عرض الأخطاء المتعلقة بقاعدة البيانات          
+            _ = MyMessageService.ShowMessage("SQLite خطأ: " + ex.Message , Brushes.IndianRed);
         }
         catch(Exception ex)
         {
-            // تسجيل أو عرض أي أخطاء عامة
-            Console.WriteLine($"Error: {ex.Message}");
+            // تسجيل أو عرض أي أخطاء عامة 
+            _ = MyMessageService.ShowMessage("خطأ1: " + ex.Message , Brushes.IndianRed);
         }
     }
 
-
     private void ShowNotification(string title , string content)
     {
-        // إنشاء نافذة الإشعار
-        var popup = new System.Windows.Controls.Primitives.Popup
+        // تشغيل صوت التنبيه الافتراضي
+        SystemSounds.Exclamation.Play();
+        try
         {
-            Placement = System.Windows.Controls.Primitives.PlacementMode.Mouse ,
-            StaysOpen = false ,
-            Child = new PopupNotificationWindow(title , content)
-        };
-        popup.IsOpen = true;
+            if(appWindow == null || !appWindow.IsVisible)
+            {
+                // إذا كانت النافذة غير موجودة أو غير مرئية، قم بإنشاءها وفتحها
+                appWindow = new PopupNotificationWindow(title , content);
+                appWindow.Closed += OnAppWindowClosed; // الاشتراك في حدث الإغلاق
+                appWindow.Show();
+            }
+            else
+            {
+                // إذا كانت النافذة مفتوحة بالفعل
+                if(appWindow.WindowState == WindowState.Minimized)
+                {
+                    // إذا كانت النافذة مصغرة، استعدها إلى الحالة الطبيعية
+                    appWindow.WindowState = WindowState.Normal;
+                }
+                // قم بتنشيط النافذة لتظهر في المقدمة
+                appWindow.Activate();
+            }
+        }
+        catch(Exception ex)
+        {
+            _ = MyMessageService.ShowMessage("خطأ2: " + ex.Message , Brushes.IndianRed);
+        }
     }
+
 
     private void MainWindows_Loaded(object sender , RoutedEventArgs e)
     {
@@ -438,7 +447,7 @@ public partial class MainWindow : Window
         {
             if(!CopyToSAPHelper.GetProcesses())
             {
-                MessageService.ShowMessage("لم أتمكن من العثور على نافذة SAP" , Brushes.IndianRed);
+                _ = MyMessageService.ShowMessage("لم أتمكن من العثور على نافذة SAP" , Brushes.IndianRed);
                 return;
             }
 
@@ -451,13 +460,13 @@ public partial class MainWindow : Window
             if(string.IsNullOrWhiteSpace(OrderDate.datePicker.Text))
             {
                 OrderDate.datePicker.Focus();
-                MessageService.ShowMessage("قيمة التاريخ فارغة" , Brushes.Red);
+                _ = MyMessageService.ShowMessage("قيمة التاريخ فارغة" , Brushes.Red);
                 return;
             }
 
             if(string.IsNullOrWhiteSpace(text))
             {
-                MessageService.ShowMessage("التتميم فارغ" , Brushes.Red);
+                _ = MyMessageService.ShowMessage("التتميم فارغ" , Brushes.Red);
                 TabControl.SetIsSelected(FinalNotesTab , true);
                 EditorRichBox.Focus();
                 return;
@@ -468,7 +477,7 @@ public partial class MainWindow : Window
                 Damaged = TxtDamaged.Text;
             }
 
-            MessageService.ShowMessage("ملحوظة: التالف فارغ." , Brushes.Yellow);
+            _ = MyMessageService.ShowMessage("ملحوظة: التالف فارغ." , Brushes.Yellow);
             TxtDamaged.Focus();
 
             dateText = OrderDate.datePicker.Text;
@@ -485,11 +494,11 @@ public partial class MainWindow : Window
             EndDate.ToString("dd.MM.yyyy" , CultureInfo.InvariantCulture)
         );
 
-            MessageService.ShowMessage("تم نسخ التتميم بنجاح" , Brushes.LawnGreen);
+            _ = MyMessageService.ShowMessage("تم نسخ التتميم بنجاح" , Brushes.LawnGreen);
 
             CopyToSAPHelper.PastToSAP();
 
-            MessageService.ShowMessage("تم لصق التتميم بنجاح" , Brushes.LawnGreen);
+            _ = MyMessageService.ShowMessage("تم لصق التتميم بنجاح" , Brushes.LawnGreen);
         }
         catch(Exception ex)
         {
@@ -503,14 +512,14 @@ public partial class MainWindow : Window
         {
             if(!CopyToSAPHelper.GetProcesses())
             {
-                MessageService.ShowMessage("لم أتمكن من العثور على نافذة SAP" , Brushes.IndianRed);
+                _ = MyMessageService.ShowMessage("لم أتمكن من العثور على نافذة SAP" , Brushes.IndianRed);
                 return;
             }
 
             if(string.IsNullOrWhiteSpace(TxtBillValue.Text))
             {
                 TxtBillValue.Focus();
-                MessageService.ShowMessage("قيمة الفاتورة فارغة" , Brushes.Red);
+                _ = MyMessageService.ShowMessage("قيمة الفاتورة فارغة" , Brushes.Red);
                 return;
             }
 
@@ -518,7 +527,7 @@ public partial class MainWindow : Window
             {
                 TabControl.SetIsSelected(EmployeeTab , true);
                 TxtEmpolyeeCod.Focus();
-                MessageService.ShowMessage("كود الفني فارغ" , Brushes.Red);
+                _ = MyMessageService.ShowMessage("كود الفني فارغ" , Brushes.Red);
                 return;
             }
 
@@ -526,7 +535,7 @@ public partial class MainWindow : Window
             {
                 TabControl.SetIsSelected(EmployeeTab , true);
                 TxtEmpolyeeCod.Focus();
-                MessageService.ShowMessage("كود الفني فارغ" , Brushes.Red);
+                _ = MyMessageService.ShowMessage("كود الفني فارغ" , Brushes.Red);
                 return;
             }
 
@@ -534,7 +543,7 @@ public partial class MainWindow : Window
             {
                 TabControl.SetIsSelected(EmployeeTab , true);
                 TxtEmpolyeeCod.Focus();
-                MessageService.ShowMessage("اسم الفني فارغ" , Brushes.Red);
+                _ = MyMessageService.ShowMessage("اسم الفني فارغ" , Brushes.Red);
                 return;
             }
 
@@ -542,14 +551,14 @@ public partial class MainWindow : Window
             {
                 TabControl.SetIsSelected(EmployeeTab , true);
                 TxtEmpolyeeCod.Focus();
-                MessageService.ShowMessage("اسم الفني فارغ" , Brushes.Red);
+                _ = MyMessageService.ShowMessage("اسم الفني فارغ" , Brushes.Red);
                 return;
             }
 
             if(string.IsNullOrWhiteSpace(TxtCompletedBy.Text))
             {
                 TxtCompletedBy.Focus();
-                MessageService.ShowMessage("كود مدخل البيانات فارغ" , Brushes.Red);
+                _ = MyMessageService.ShowMessage("كود مدخل البيانات فارغ" , Brushes.Red);
                 return;
             }
 
@@ -561,15 +570,15 @@ public partial class MainWindow : Window
                 TxtEmpolyeeName.Text ,
                 TxtCompletedBy.Text
                 );
-            MessageService.ShowMessage("تم نسخ التاسك بنجاح" , Brushes.LawnGreen);
+            _ = MyMessageService.ShowMessage("تم نسخ التاسك بنجاح" , Brushes.LawnGreen);
 
             CopyToSAPHelper.PastToSAP();
 
-            MessageService.ShowMessage("تم لصق التاسك بنجاح" , Brushes.LawnGreen);
+            _ = MyMessageService.ShowMessage("تم لصق التاسك بنجاح" , Brushes.LawnGreen);
         }
         catch(Exception ex)
         {
-            MessageService.ShowMessage("حدث خطأ: (" + ex + ")" , Brushes.Red);
+            _ = MyMessageService.ShowMessage("حدث خطأ: (" + ex + ")" , Brushes.Red);
             MessageBox.Show("حدث خطأ غير متوقع: " + ex.Message);
         }
     }
@@ -580,7 +589,7 @@ public partial class MainWindow : Window
         {
             if(!CopyToSAPHelper.GetProcesses())
             {
-                MessageService.ShowMessage("لم أتمكن من العثور على نافذة SAP" , Brushes.IndianRed);
+                _ = MyMessageService.ShowMessage("لم أتمكن من العثور على نافذة SAP" , Brushes.IndianRed);
                 return;
             }
 
@@ -589,13 +598,13 @@ public partial class MainWindow : Window
             if(string.IsNullOrWhiteSpace(TxtBillNumber.Text))
             {
                 TxtBillNumber.Focus();
-                MessageService.ShowMessage("رقم الفاتورة فارغة" , Brushes.Yellow);
+                _ = MyMessageService.ShowMessage("رقم الفاتورة فارغة" , Brushes.Yellow);
             }
 
             if(string.IsNullOrWhiteSpace(TxtOrderNumber.Text))
             {
                 TxtOrderNumber.Focus();
-                MessageService.ShowMessage("رقم امر الشغل فارغ" , Brushes.Red);
+                _ = MyMessageService.ShowMessage("رقم امر الشغل فارغ" , Brushes.Red);
                 return;
             }
 
@@ -613,15 +622,15 @@ public partial class MainWindow : Window
                 TxtOrderNumber.Text
                 );
 
-            MessageService.ShowMessage("تم نسخ الاوبريشن بنجاح" , Brushes.LawnGreen);
+            _ = MyMessageService.ShowMessage("تم نسخ الاوبريشن بنجاح" , Brushes.LawnGreen);
 
             CopyToSAPHelper.PastToSAP();
 
-            MessageService.ShowMessage("تم لصق الاوبريشن بنجاح" , Brushes.LawnGreen);
+            _ = MyMessageService.ShowMessage("تم لصق الاوبريشن بنجاح" , Brushes.LawnGreen);
         }
         catch(Exception ex)
         {
-            MessageService.ShowMessage("حدث خطأ: (" + ex + ")" , Brushes.Red);
+            _ = MyMessageService.ShowMessage("حدث خطأ: (" + ex + ")" , Brushes.Red);
             MessageBox.Show("حدث خطأ غير متوقع: " + ex.Message);
         }
     }
@@ -632,7 +641,7 @@ public partial class MainWindow : Window
         {
             if(!CopyToSAPHelper.GetProcesses())
             {
-                MessageService.ShowMessage("لم أتمكن من العثور على نافذة SAP" , Brushes.IndianRed);
+                _ = MyMessageService.ShowMessage("لم أتمكن من العثور على نافذة SAP" , Brushes.IndianRed);
                 return;
             }
 
@@ -684,15 +693,15 @@ public partial class MainWindow : Window
                 ""
                 );
 
-            MessageService.ShowMessage("تم نسخ الزيارات بنجاح" , Brushes.LawnGreen);
+            _ = MyMessageService.ShowMessage("تم نسخ الزيارات بنجاح" , Brushes.LawnGreen);
 
             CopyToSAPHelper.PastToSAP();
 
-            MessageService.ShowMessage("تم لصق الزيارات بنجاح" , Brushes.LawnGreen);
+            _ = MyMessageService.ShowMessage("تم لصق الزيارات بنجاح" , Brushes.LawnGreen);
         }
         catch(Exception ex)
         {
-            MessageService.ShowMessage("حدث خطأ: (" + ex + ")" , Brushes.Red);
+            _ = MyMessageService.ShowMessage("حدث خطأ: (" + ex + ")" , Brushes.Red);
             MessageBox.Show("حدث خطأ غير متوقع: " + ex.Message);
         }
     }
@@ -703,28 +712,28 @@ public partial class MainWindow : Window
         {
             if(!CopyToSAPHelper.GetProcesses())
             {
-                MessageService.ShowMessage("لم أتمكن من العثور على نافذة SAP" , Brushes.IndianRed);
+                _ = MyMessageService.ShowMessage("لم أتمكن من العثور على نافذة SAP" , Brushes.IndianRed);
                 return;
             }
 
             if(string.IsNullOrWhiteSpace(TxtID.Text))
             {
                 TabControl.SetIsSelected(CentersCycleTab , true);
-                MessageService.ShowMessage("لم يتم اختيار نوع الخدمة" , Brushes.Red);
+                _ = MyMessageService.ShowMessage("لم يتم اختيار نوع الخدمة" , Brushes.Red);
                 return;
             }
 
             if(TxtID.Text == "ID")
             {
                 TabControl.SetIsSelected(CentersCycleTab , true);
-                MessageService.ShowMessage("لم يتم اختيار نوع الخدمة" , Brushes.Red);
+                _ = MyMessageService.ShowMessage("لم يتم اختيار نوع الخدمة" , Brushes.Red);
                 return;
             }
 
             if(string.IsNullOrWhiteSpace(TxtShortText.Text))
             {
                 TabControl.SetIsSelected(CentersCycleTab , true);
-                MessageService.ShowMessage("لم يتم اختيار نوع الخدمة" , Brushes.Red);
+                _ = MyMessageService.ShowMessage("لم يتم اختيار نوع الخدمة" , Brushes.Red);
                 return;
             }
 
@@ -735,11 +744,11 @@ public partial class MainWindow : Window
                 "1"
             );
 
-            MessageService.ShowMessage("تم نسخ التتميم بنجاح" , Brushes.LawnGreen);
+            _ = MyMessageService.ShowMessage("تم نسخ التتميم بنجاح" , Brushes.LawnGreen);
 
             CopyToSAPHelper.PastToSAP();
 
-            MessageService.ShowMessage("تم لصق التتميم بنجاح" , Brushes.LawnGreen);
+            _ = MyMessageService.ShowMessage("تم لصق التتميم بنجاح" , Brushes.LawnGreen);
         }
         catch(Exception ex)
         {
@@ -753,7 +762,7 @@ public partial class MainWindow : Window
         {
             if(!CopyToSAPHelper.GetProcesses())
             {
-                MessageService.ShowMessage("لم أتمكن من العثور على نافذة SAP" , Brushes.IndianRed);
+                _ = MyMessageService.ShowMessage("لم أتمكن من العثور على نافذة SAP" , Brushes.IndianRed);
                 return;
             }
 
@@ -766,13 +775,13 @@ public partial class MainWindow : Window
             if(string.IsNullOrWhiteSpace(OrderDate.datePicker.Text))
             {
                 OrderDate.datePicker.Focus();
-                MessageService.ShowMessage("قيمة التاريخ فارغة" , Brushes.Red);
+                _ = MyMessageService.ShowMessage("قيمة التاريخ فارغة" , Brushes.Red);
                 return;
             }
 
             if(string.IsNullOrWhiteSpace(text))
             {
-                MessageService.ShowMessage("التتميم فارغ" , Brushes.Red);
+                _ = MyMessageService.ShowMessage("التتميم فارغ" , Brushes.Red);
                 EditorRichBox.Focus();
                 return;
             }
@@ -782,7 +791,7 @@ public partial class MainWindow : Window
                 Damaged = TxtDamaged.Text;
             }
 
-            MessageService.ShowMessage("التالف فارغ" , Brushes.Yellow);
+            _ = MyMessageService.ShowMessage("التالف فارغ" , Brushes.Yellow);
             TxtDamaged.Focus();
 
             dateText = OrderDate.datePicker.Text;
@@ -793,7 +802,7 @@ public partial class MainWindow : Window
             if(string.IsNullOrEmpty(dateText))
             {
                 OrderDate.datePicker.Focus();
-                MessageService.ShowMessage("قيمة التاريخ فارغة" , Brushes.Red);
+                _ = MyMessageService.ShowMessage("قيمة التاريخ فارغة" , Brushes.Red);
                 return;
             }
 
@@ -806,11 +815,11 @@ public partial class MainWindow : Window
                 EndDate.ToString("dd.MM.yyyy" , CultureInfo.InvariantCulture)
             );
 
-            MessageService.ShowMessage("تم نسخ التتميم بنجاح" , Brushes.LawnGreen);
+            _ = MyMessageService.ShowMessage("تم نسخ التتميم بنجاح" , Brushes.LawnGreen);
 
             CopyToSAPHelper.PastToSAP();
 
-            MessageService.ShowMessage("تم لصق التتميم بنجاح" , Brushes.LawnGreen);
+            _ = MyMessageService.ShowMessage("تم لصق التتميم بنجاح" , Brushes.LawnGreen);
         }
         catch(Exception ex)
         {
@@ -864,18 +873,19 @@ public partial class MainWindow : Window
     }
 
     private void Btnadjust_Click(object sender , RoutedEventArgs e)
-    {// تم: ضبط 
-        if(finalNotes.Count > 0)
-        {
-            ////ComboEmployee.Items.Add("Ahmed");
-            // ListData.ItemsSource = finalNotes;
+    {
+        // تم: ضبط 
+        //if(finalNotes.Count > 0)
+        //{
+        //    ////ComboEmployee.Items.Add("Ahmed");
+        //    // ListData.ItemsSource = finalNotes;
 
-            MessageService.ShowMessage("تم تحميل البيانات" , Brushes.LawnGreen);
-        }
-        else
-        {
-            MessageService.ShowMessage("لا يوجد بيانات" , Brushes.IndianRed);
-        }
+        //    _=MyMessageService.ShowMessage("تم تحميل البيانات" , Brushes.LawnGreen);
+        //}
+        //else
+        //{
+        //    _=MyMessageService.ShowMessage("لا يوجد بيانات" , Brushes.IndianRed);
+        //}
     }
 
     // الحدث الذي يتم تفعيله عند تغيير العنصر المحدد في الـ ListBox
@@ -958,13 +968,13 @@ public partial class MainWindow : Window
     private void BtnSAPLogin_Click(object sender , RoutedEventArgs e)
     {
         CopyToSAPHelper.SAPLogin();
-        MessageService.ShowMessage("تم تسجيل الدخول الى SAP" , Brushes.LawnGreen);
+        _ = MyMessageService.ShowMessage("تم تسجيل الدخول الى SAP" , Brushes.LawnGreen);
     }
 
     private void BtnBtnSAPLogout_Click(object sender , RoutedEventArgs e)
     {
         CopyToSAPHelper.SAPLogout();
-        MessageService.ShowMessage("تم اغلاق كل نوافذ SAP" , Brushes.IndianRed);
+        _ = MyMessageService.ShowMessage("تم اغلاق كل نوافذ SAP" , Brushes.IndianRed);
     }
 
     private void WarntyOrFees_Click(object sender , RoutedEventArgs e)
@@ -1049,7 +1059,7 @@ public partial class MainWindow : Window
         if(appWindow == null || !appWindow.IsVisible)
         {
             // إذا كانت النافذة غير موجودة أو غير مرئية، قم بإنشاءها وفتحها
-            appWindow = new PopupMessagesWindow( );
+            appWindow = new MyMessagesWindow();
             appWindow.Closed += OnAppWindowClosed; // الاشتراك في حدث الإغلاق
             appWindow.Show();
         }

@@ -51,20 +51,16 @@
                 Grid.Row="0">
                 <TextBox
                     x:Name="SecondTextBox"
-                    FontSize="20"
                     Margin="3,9,3,2"
                     IsReadOnly="True"
                     Foreground="LightGreen"
                     Background="#000"
                     HorizontalScrollBarVisibility="Auto"
-                    
                     HorizontalAlignment="Stretch"
-                    VerticalAlignment="Top"
-                     />
+                    VerticalAlignment="Top" />
                 <TextBox
                     x:Name="MainTextBox"
                     Focusable="True"
-                    FontSize="35"
                     Margin="3,2,3,5"
                     Height="56"
                     HorizontalScrollBarVisibility="Auto"
@@ -83,35 +79,30 @@
                 <Button
                     Content="√"
                     Width="69"
-                    Height="35"
                     Margin="3"
                     Foreground="BlueViolet"
                     Click="OnAdvancedOperationClick" />
                 <Button
                     Content="^"
                     Width="69"
-                    Height="35"
                     Margin="3"
                     Foreground="BlueViolet"
                     Click="OnAdvancedOperationClick" />
                 <Button
                     Content="sin"
                     Width="69"
-                    Height="35"
                     Margin="3"
                     Foreground="BlueViolet"
                     Click="OnAdvancedOperationClick" />
                 <Button
                     Content="cos"
                     Width="69"
-                    Height="35"
                     Margin="3"
                     Foreground="BlueViolet"
                     Click="OnAdvancedOperationClick" />
                 <Button
                     Content="%"
                     Width="69"
-                    Height="35"
                     Margin="3"
                     Foreground="BlueViolet"
                     Click="OnPercentageClick" />
@@ -123,35 +114,28 @@
                 <Button
                     Content="7"
                     Width="69"
-                    Height="57"
                     Margin="3"
                     Click="OnNumberClick" />
                 <Button
                     Content="8"
                     Width="69"
-                    Height="57"
                     Margin="3"
                     Click="OnNumberClick" />
                 <Button
                     Content="9"
                     Width="69"
-                    Height="57"
                     Margin="3"
                     Click="OnNumberClick" />
                 <Button
                     Content="⌫"
                     Width="69"
-                    Height="57"
                     Margin="3"
-                    FontSize="40"
                     Foreground="#F03030"
                     Click="OnBackSpaceClick" />
                 <Button
                     Content="C"
                     Width="69"
-                    Height="57"
                     Margin="3"
-                    FontSize="40"
                     Foreground="#F03030"
                     Click="OnClearAll" />
             </StackPanel>
@@ -162,35 +146,28 @@
                 <Button
                     Content="4"
                     Width="69"
-                    Height="57"
                     Margin="3"
                     Click="OnNumberClick" />
                 <Button
                     Content="5"
                     Width="69"
-                    Height="57"
                     Margin="3"
                     Click="OnNumberClick" />
                 <Button
                     Content="6"
                     Width="69"
-                    Height="57"
                     Margin="3"
                     Click="OnNumberClick" />
                 <Button
                     Content="×"
                     Width="69"
-                    Height="57"
                     Margin="3"
-                    FontSize="50"
                     Foreground="Aqua"
                     Click="OnOperatorClick" />
                 <Button
                     Content="÷"
                     Width="69"
-                    Height="57"
                     Margin="3"
-                    FontSize="50"
                     Foreground="Aqua"
                     Click="OnOperatorClick" />
             </StackPanel>
@@ -201,35 +178,28 @@
                 <Button
                     Content="1"
                     Width="69"
-                    Height="57"
                     Margin="3"
                     Click="OnNumberClick" />
                 <Button
                     Content="2"
                     Width="69"
-                    Height="57"
                     Margin="3"
                     Click="OnNumberClick" />
                 <Button
                     Content="3"
                     Width="69"
-                    Height="57"
                     Margin="3"
                     Click="OnNumberClick" />
                 <Button
                     Content="+"
                     Width="69"
-                    Height="57"
                     Margin="3"
-                    FontSize="50"
                     Foreground="Aqua"
                     Click="OnOperatorClick" />
                 <Button
                     Content="-"
                     Width="69"
-                    Height="57"
                     Margin="3"
-                    FontSize="50"
                     Foreground="Aqua"
                     Click="OnOperatorClick" />
             </StackPanel>
@@ -240,22 +210,17 @@
                 <Button
                     Content="0"
                     Width="144"
-                    Height="57"
                     Margin="3"
                     Click="OnNumberClick" />
                 <Button
                     Content="."
                     Width="69"
-                    Height="57"
                     Margin="3"
-                    FontSize="40"
                     Click="OnDotClick" />
                 <Button
                     Content="="
                     Width="144"
-                    Height="57"
                     Margin="3"
-                    FontSize="50"
                     IsDefault="True"
                     Foreground="LawnGreen"
                     Click="OnEqualClick" />

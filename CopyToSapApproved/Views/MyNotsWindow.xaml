@@ -73,10 +73,9 @@
                         ToolTip="وقت التنبيه (hh:mm)"
                         HorizontalContentAlignment="Center"
                         VerticalContentAlignment="Center"
-                        Width="60"
+                        Width="80"
                         Margin="3"
                         FontSize="16"
-                        TextWrapping="Wrap"
                         VerticalScrollBarVisibility="Auto"
                         ScrollViewer.CanContentScroll="True" />
                     <TextBlock
@@ -113,7 +112,7 @@
                 Height="60"
                 HorizontalAlignment="Left">
                 <TextBox
-                    x:Name="txtMyNote"
+                    x:Name="txtContent"
                     ToolTip="ملحوظة"
                     Margin="3"
                     FontSize="16"
@@ -138,7 +137,7 @@
                                 Value="Collapsed" />
                             <Style.Triggers>
                                 <DataTrigger
-                                    Binding="{Binding Text, ElementName=txtMyNote}"
+                                    Binding="{Binding Text, ElementName=txtContent}"
                                     Value="">
                                     <Setter
                                         Property="Visibility"
@@ -270,7 +269,8 @@
             <DataGrid.Columns>
                 <DataGridTemplateColumn
                     Header="ID"
-                    SortMemberPath="[ID]">
+                    SortMemberPath="ID"
+                    CanUserSort="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBox
@@ -282,13 +282,14 @@
                                 TextAlignment="Center"
                                 HorizontalContentAlignment="Center"
                                 VerticalContentAlignment="Center"
-                                Text="{Binding Path=[ID]}" />
+                                Text="{Binding Path=ID}" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn
                     Header="العنوان"
-                    SortMemberPath="[Title]">
+                    SortMemberPath="Title"
+                    CanUserSort="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBox
@@ -296,7 +297,7 @@
                                 Padding="2"
                                 IsReadOnly="True"
                                 Background="#00000033"
-                                Foreground="White"
+                                Foreground="Green"
                                 SelectionBrush="Red"
                                 TextWrapping="Wrap"
                                 TextAlignment="Center"
@@ -304,14 +305,15 @@
                                 VerticalContentAlignment="Center"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch"
-                                Text="{Binding Path=[Title]}" />
+                                Text="{Binding Path=Title}" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn
                     Header="ملاحظات"
-                    SortMemberPath="[MyNote]"
-                    Width="150">
+                    SortMemberPath="Content"
+                    CanUserSort="True"
+                    Width="Auto">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBox
@@ -327,18 +329,43 @@
                                 VerticalContentAlignment="Center"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch"
-                                Text="{Binding Path=[MyNote]}" />
+                                Text="{Binding Path=Content}" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn
-                    Header="التاريخ"
-                    SortMemberPath="[CreatedAt]">
+                    Header="ميعاد التنبية"
+                    SortMemberPath="AlertTime"
+                    CanUserSort="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBox
                                 Height="Auto"
-                                Width="85"
+                                Width="Auto"
+                                Padding="2"
+                                IsReadOnly="True"
+                                Background="#00000033"
+                                Foreground="Green"
+                                SelectionBrush="Red"
+                                TextAlignment="Center"
+                                TextWrapping="Wrap"
+                                HorizontalContentAlignment="Center"
+                                VerticalContentAlignment="Center"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                Text="{Binding Path=AlertTime}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn
+                    Header="التنبيه"
+                    SortMemberPath="Alerted"
+                    CanUserSort="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBox
+                                Height="Auto"
+                                Width="Auto"
                                 Padding="2"
                                 IsReadOnly="True"
                                 Background="#00000033"
@@ -350,7 +377,31 @@
                                 VerticalContentAlignment="Center"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch"
-                                Text="{Binding Path=[CreatedAt]}" />
+                                Text="{Binding Path=Alerted}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn
+                    Header="تاريخ التسجيل"
+                    SortMemberPath="CreatedAt"
+                    CanUserSort="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBox
+                                Height="Auto"
+                                Width="Auto"
+                                Padding="2"
+                                IsReadOnly="True"
+                                Background="#00000033"
+                                Foreground="White"
+                                SelectionBrush="Red"
+                                TextAlignment="Center"
+                                TextWrapping="Wrap"
+                                HorizontalContentAlignment="Center"
+                                VerticalContentAlignment="Center"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                Text="{Binding Path=CreatedAt}" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>

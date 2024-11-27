@@ -96,7 +96,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Controllers\MessageService.cs" />
+    <Compile Include="Controllers\MyMessageService.cs" />
     <Compile Include="Controllers\MyController.cs" />
     <Compile Include="DatePickerWithButtons.xaml.cs">
       <DependentUpon>DatePickerWithButtons.xaml</DependentUpon>
@@ -104,11 +104,9 @@
     <Compile Include="Helper\DatabaseHelper.cs" />
     <Compile Include="Helper\ExcelHelper.cs" />
     <Compile Include="Helper\IsFinished,.cs" />
-    <Compile Include="Helper\NotifyIconHelper.cs" />
     <Compile Include="Helper\OperationClass.cs" />
     <Compile Include="Helper\StartupManager.cs" />
     <Compile Include="Helper\SubstringConverter.cs" />
-    <Compile Include="Helper\TimerNotificationService.cs" />
     <Compile Include="Models\ActivitiesModels.cs" />
     <Compile Include="Models\CentersCycleModels.cs" />
     <Compile Include="Models\Employee.cs" />
@@ -143,8 +141,8 @@
     <Compile Include="Views\MyNotsWindow.xaml.cs">
       <DependentUpon>MyNotsWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PopupMessagesWindow.xaml.cs">
-      <DependentUpon>PopupMessagesWindow.xaml</DependentUpon>
+    <Compile Include="Views\MyMessagesWindow.xaml.cs">
+      <DependentUpon>MyMessagesWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PopupNotificationWindow.xaml.cs">
       <DependentUpon>PopupNotificationWindow.xaml</DependentUpon>
@@ -204,7 +202,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\PopupMessagesWindow.xaml">
+    <Page Include="Views\MyMessagesWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

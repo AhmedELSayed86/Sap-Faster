@@ -144,7 +144,7 @@ public class CopyToSAPHelper()
             }
             else
             {
-                MessageService.ShowMessage("لم يتم العثور على برنامج الساب!" , Brushes.IndianRed);
+                _=MyMessageService.ShowMessage("لم يتم العثور على برنامج الساب!" , Brushes.IndianRed);
                 Application.Current.Shutdown();
                 return;
             }
@@ -198,7 +198,7 @@ public class CopyToSAPHelper()
         }
         catch(Exception ex)
         {
-            MessageService.ShowMessage(ex.Message , Brushes.IndianRed);
+            _=MyMessageService.ShowMessage(ex.Message , Brushes.IndianRed);
             Application.Current.Shutdown();
             return;
         }
@@ -213,7 +213,7 @@ public class CopyToSAPHelper()
 
             if(processes.Length == 0)
             {
-                MessageService.ShowMessage("رجاء افتح الساب اولا" , Brushes.Yellow);
+                _=MyMessageService.ShowMessage("رجاء افتح الساب اولا" , Brushes.Yellow);
                 return false;
             }
 
@@ -221,13 +221,13 @@ public class CopyToSAPHelper()
 
             if(handle == IntPtr.Zero)
             {
-                MessageService.ShowMessage("لم أتمكن من العثور على نافذة SAP" , Brushes.IndianRed);
+                _=MyMessageService.ShowMessage("لم أتمكن من العثور على نافذة SAP" , Brushes.IndianRed);
                 return false;
             }           
         }
         catch(Exception ex)
         {
-            MessageService.ShowMessage($"خطأ: {ex.Message}" , Brushes.IndianRed);
+            _=MyMessageService.ShowMessage($"خطأ: {ex.Message}" , Brushes.IndianRed);
             return false;
         }
         return true;
@@ -259,13 +259,13 @@ public class CopyToSAPHelper()
         finalNotes = databaseHelper.GetAllData("FinalNotes");
         if(finalNotes.Count > 0)
         {
-            //MessageService.ShowMessage("تم تحميل البيانات" , Brushes.LawnGreen);
+            //_=MyMessageService.ShowMessage("تم تحميل البيانات" , Brushes.LawnGreen);
             ////ComboEmployee.Items.Add("Ahmed");
             return finalNotes;
         }
         else
         {
-            //MessageService.ShowMessage("لا يوجد بيانات" , Brushes.IndianRed);
+            //_=MyMessageService.ShowMessage("لا يوجد بيانات" , Brushes.IndianRed);
             return finalNotes;
         }
     }
@@ -299,7 +299,7 @@ public class CopyToSAPHelper()
         // نسخ النص إلى الكليب بورد
         Clipboard.SetDataObject(new DataObject(DataFormats.Text , textToCopy) , true);
 
-        MessageService.ShowMessage("تم نسخ النموذج" , Brushes.LawnGreen);
+        _=MyMessageService.ShowMessage("تم نسخ النموذج" , Brushes.LawnGreen);
 
         return _ActivitieslsList.ToList();
     }
@@ -333,7 +333,7 @@ public class CopyToSAPHelper()
         // نسخ النص إلى الكليب بورد
         Clipboard.SetDataObject(new DataObject(DataFormats.Text , textToCopy) , true);
 
-        MessageService.ShowMessage("تم نسخ النموذج" , Brushes.LawnGreen);
+        _=MyMessageService.ShowMessage("تم نسخ النموذج" , Brushes.LawnGreen);
 
         return _TaskslsList.ToList();
     }
@@ -366,7 +366,7 @@ public class CopyToSAPHelper()
         // نسخ النص إلى الكليب بورد
         Clipboard.SetDataObject(new DataObject(DataFormats.Text , textToCopy) , true);
 
-        MessageService.ShowMessage("تم نسخ النموذج" , Brushes.LawnGreen);
+        _=MyMessageService.ShowMessage("تم نسخ النموذج" , Brushes.LawnGreen);
 
         return _OperationslsList.ToList();
     }
@@ -399,7 +399,7 @@ public class CopyToSAPHelper()
         // نسخ النص إلى الكليب بورد
         Clipboard.SetDataObject(new DataObject(DataFormats.Text , textToCopy) , true);
 
-        MessageService.ShowMessage("تم نسخ النموذج" , Brushes.LawnGreen);
+        _=MyMessageService.ShowMessage("تم نسخ النموذج" , Brushes.LawnGreen);
 
         return _OperationslsList.ToList();
     }
@@ -429,7 +429,7 @@ public class CopyToSAPHelper()
         // نسخ النص إلى الكليب بورد
         Clipboard.SetDataObject(new DataObject(DataFormats.Text , textToCopy) , true);
 
-        MessageService.ShowMessage("تم نسخ النموذج" , Brushes.LawnGreen);
+        _=MyMessageService.ShowMessage("تم نسخ النموذج" , Brushes.LawnGreen);
 
         return _CentersCyclelsList.ToList();
     }

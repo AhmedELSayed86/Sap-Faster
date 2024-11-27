@@ -1,4 +1,5 @@
 ﻿using CopyToSapApproved.Controllers;
+using CopyToSapApproved.Helper;
 using CopyToSapApproved.Models;
 using System;
 using System.Collections.Generic;
@@ -18,20 +19,33 @@ using System.Windows.Shapes;
 namespace CopyToSapApproved.Views;
 
 /// <summary>
-/// Interaction logic for PopupMessagesWindow.xaml
+/// Interaction logic for MyMessagesWindow.xaml
 /// </summary>
-public partial class PopupMessagesWindow : Window
-{
-    public ObservableCollection<MyMessage> Messages { get; set; }
+public partial class MyMessagesWindow : Window
+{ 
+    public ObservableCollection<MyMessage> _Messages { get; set; }
 
-    public PopupMessagesWindow()
+    public MyMessagesWindow()
     {
         InitializeComponent();
-        // افتراضيا، جلب البيانات من الخدمة
-        Messages = MessageService._messageList;
 
-        // تعيين المصدر إلى ItemsControl
-        CollectionMessages.ItemsSource = Messages;
+        #region تثبيت التطبيق في المقدمة
+        Dispatcher.Invoke(() =>
+        {
+            this.Activate();
+            this.WindowState = System.Windows.WindowState.Normal;
+            this.Topmost = true;
+            this.Focus();
+        });
+        #endregion
+
+        // افتراضيا، جلب البيانات من الخدمة       
+        RefreshGrid();
+    }
+
+    private void RefreshGrid()
+    {
+        CollectionMessages.ItemsSource = _Messages = MyMessageService._messageList;
     }
 
     private void Button_Clicked(object sender , RoutedEventArgs e)

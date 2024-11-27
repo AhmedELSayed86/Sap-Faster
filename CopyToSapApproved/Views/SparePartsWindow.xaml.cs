@@ -99,13 +99,13 @@ namespace CopyToSapApproved.Views
         {
             if(string.IsNullOrWhiteSpace(txtSearch.Text))
             {
-               MessageService.ShowMessage("يجب اضافة كود" , Brushes.Yellow); 
+               _=MyMessageService.ShowMessage("يجب اضافة كود" , Brushes.Yellow); 
                 return;
             }
 
             if(CheckFoundC3(Convert.ToInt32(txtSearch.Text) , "C1"))
             {
-               MessageService.ShowMessage("لا يمكن الاضافة، الكود بالفعل موجود بالجدول" , Brushes.Yellow); 
+               _=MyMessageService.ShowMessage("لا يمكن الاضافة، الكود بالفعل موجود بالجدول" , Brushes.Yellow); 
                 return;
             }
             // جلب DescriptionAR باستخدام SapCode المدخل
@@ -113,7 +113,7 @@ namespace CopyToSapApproved.Views
 
             if(string.IsNullOrWhiteSpace(descriptionAR))
             {
-               MessageService.ShowMessage("لم يتم العثور على البيانات" , Brushes.IndianRed);
+               _=MyMessageService.ShowMessage("لم يتم العثور على البيانات" , Brushes.IndianRed);
                 return;
             }
 
@@ -130,7 +130,7 @@ namespace CopyToSapApproved.Views
             _ComponentlsList.Add(Componentl);
             DataGridView.ItemsSource = _ComponentlsList.ToList();
             SetCountr();
-           MessageService.ShowMessage("تم اضافة الصرف" , Brushes.LawnGreen);
+           _=MyMessageService.ShowMessage("تم اضافة الصرف" , Brushes.LawnGreen);
         }
 
 
@@ -139,7 +139,7 @@ namespace CopyToSapApproved.Views
 
             if(DataGridView.Items.Count <= 0)
             {
-               MessageService.ShowMessage("لا يوجد بيانات" , Brushes.Yellow);
+               _=MyMessageService.ShowMessage("لا يوجد بيانات" , Brushes.Yellow);
                 return;
             }
 
@@ -153,7 +153,7 @@ namespace CopyToSapApproved.Views
             //DataGridView.SelectAll();
             //ApplicationCommands.Copy.Execute(null, DataGridView);
             //DataGridView.ItemsSource = _Component.ToList();
-           MessageService.ShowMessage("تم النسخ" , Brushes.LawnGreen);
+           _=MyMessageService.ShowMessage("تم النسخ" , Brushes.LawnGreen);
         }
 
         private void BtnCopyC3_Click(object sender , RoutedEventArgs e)
@@ -167,7 +167,7 @@ namespace CopyToSapApproved.Views
             {
                 if(CheckFoundC3(item.ID , "C3"))
                 {
-                   MessageService.ShowMessage("التالف موجود" , Brushes.Yellow);
+                   _=MyMessageService.ShowMessage("التالف موجود" , Brushes.Yellow);
                     Counter++;
                 }
                 else
@@ -176,20 +176,20 @@ namespace CopyToSapApproved.Views
                     {  // جلب DescriptionAR باستخدام SapCode المدخل
                         descriptionAR = _databaseHelper.GetDescriptionARFromSparePart(item.ID.ToString());
                         AddDataC3(item.ID , descriptionAR , item.Quantity , item.Stor);
-                       MessageService.ShowMessage("تم اضافة التالف" , Brushes.LawnGreen); Counter++;
+                       _=MyMessageService.ShowMessage("تم اضافة التالف" , Brushes.LawnGreen); Counter++;
                     }
                 }
             }
 
             if(Counter == 0)
             {
-               MessageService.ShowMessage("لا يوجد تالف" , Brushes.Yellow);
+               _=MyMessageService.ShowMessage("لا يوجد تالف" , Brushes.Yellow);
                 return;
             }
 
             CopyDataGrid(false);
 
-           MessageService.ShowMessage("تم النسخ" , Brushes.LawnGreen);
+           _=MyMessageService.ShowMessage("تم النسخ" , Brushes.LawnGreen);
         }
 
         private void AddDataC3(int ID , string descriptionAR , short Quantity , string Stor)
@@ -327,7 +327,7 @@ namespace CopyToSapApproved.Views
             {
                 if(_ComponentlsList.Count() <= 0)
                 {
-                   MessageService.ShowMessage("لا يوجد بيانات لحذفها" , Brushes.Yellow);
+                   _=MyMessageService.ShowMessage("لا يوجد بيانات لحذفها" , Brushes.Yellow);
                 }
                 else
                 {
@@ -335,7 +335,7 @@ namespace CopyToSapApproved.Views
 
                     if(currentRowIndex < 0)
                     {
-                       MessageService.ShowMessage("يجب تحديد صف لحذفه" , Brushes.Yellow);
+                       _=MyMessageService.ShowMessage("يجب تحديد صف لحذفه" , Brushes.Yellow);
                     }
                     else
                     {
@@ -348,7 +348,7 @@ namespace CopyToSapApproved.Views
             }
             catch(Exception)
             {
-               MessageService.ShowMessage("لا يوجد بيانات لحذفها" , Brushes.Yellow);
+               _=MyMessageService.ShowMessage("لا يوجد بيانات لحذفها" , Brushes.Yellow);
             }
             txtSearch.Focus();
         }
@@ -365,7 +365,7 @@ namespace CopyToSapApproved.Views
             }
             else
             {
-               MessageService.ShowMessage("لا يوجد بيانات لحذفها" , Brushes.Yellow);
+               _=MyMessageService.ShowMessage("لا يوجد بيانات لحذفها" , Brushes.Yellow);
             }
             txtSearch.Focus();
         }

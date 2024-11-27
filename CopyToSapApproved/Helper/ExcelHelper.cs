@@ -3,7 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using System.Windows.Media;
 using ClosedXML.Excel;
+using CopyToSapApproved.Controllers;
+using CopyToSapApproved.Models;
+using CopyToSapApproved.Views;
 using DocumentFormat.OpenXml.EMMA;
 using DocumentFormat.OpenXml.Office2010.Excel;
 
@@ -93,7 +97,7 @@ public class ExcelHelper
 
                 if(ValidateRow(parameters))
                 {
-                   DatabaseHelper.InsertIntoTable("SparePart" , parameters);
+                    DatabaseHelper.InsertIntoTable("SparePart" , parameters);
                     AddedData++;
                 }
                 else
@@ -102,14 +106,14 @@ public class ExcelHelper
                 }
             }
 
-            MessageBox.Show($"تم أضافة ({AddedData}) صفوف بنجاح،\n" +
-               $"تم تخطي عدد ({skippedDueToExistence}) صفوف بسبب ان الكود موجود بالفعل،\n" +
-               $"وتم تخطي عدد ({skippedDueToInvalidData}) صفوف بسبب عدم توافق البيانات.");
+            _ = MyMessageService.ShowMessage($"تم أضافة ({AddedData}) صفوف بنجاح،\n" +
+              $"تم تخطي عدد ({skippedDueToExistence}) صفوف بسبب ان الكود موجود بالفعل،\n" +
+              $"وتم تخطي عدد ({skippedDueToInvalidData}) صفوف بسبب عدم توافق البيانات." , Brushes.LawnGreen);
             return true;
         }
         catch(Exception ex)
         {
-            MessageBox.Show("حدث خطأ أثناء معالجة الملف: " + ex.Message);
+            _ = MyMessageService.ShowMessage("حدث خطأ أثناء معالجة الملف: " + ex.Message , Brushes.IndianRed);
             return false;
         }
     }
@@ -155,7 +159,7 @@ public class ExcelHelper
 
                 if(ValidateRow(parameters))
                 {
-                   DatabaseHelper.InsertIntoTable("Employee" , parameters);
+                    DatabaseHelper.InsertIntoTable("Employee" , parameters);
                     AddedData++;
                 }
                 else
@@ -164,14 +168,14 @@ public class ExcelHelper
                 }
             }
 
-            MessageBox.Show($"تم أضافة ({AddedData}) صفوف بنجاح،\n" +
-                $"تم تخطي عدد ({skippedDueToExistence}) صفوف بسبب ان الكود موجود بالفعل،\n" +
-                $"وتم تخطي عدد ({skippedDueToInvalidData}) صفوف بسبب عدم توافق البيانات.");
+            _ = MyMessageService.ShowMessage($"تم أضافة ({AddedData}) صفوف بنجاح،\n" +
+             $"تم تخطي عدد ({skippedDueToExistence}) صفوف بسبب ان الكود موجود بالفعل،\n" +
+             $"وتم تخطي عدد ({skippedDueToInvalidData}) صفوف بسبب عدم توافق البيانات." , Brushes.LawnGreen);
             return true;
         }
         catch(Exception ex)
         {
-            MessageBox.Show("حدث خطأ أثناء معالجة الملف: " + ex.Message);
+            _ = MyMessageService.ShowMessage("حدث خطأ أثناء معالجة الملف: " + ex.Message , Brushes.IndianRed);
             return false;
         }
     }
@@ -221,7 +225,7 @@ public class ExcelHelper
 
                 if(ValidateRow(parameters))
                 {
-                   DatabaseHelper.InsertIntoTable("FinalNotes" , parameters);
+                    DatabaseHelper.InsertIntoTable("FinalNotes" , parameters);
                     AddedData++;
                 }
                 else
@@ -230,14 +234,14 @@ public class ExcelHelper
                 }
             }
 
-            MessageBox.Show($"تم أضافة ({AddedData}) صفوف بنجاح،\n" +
-                $"تم تخطي عدد ({skippedDueToExistence}) صفوف بسبب ان الكود موجود بالفعل،\n" +
-                $"وتم تخطي عدد ({skippedDueToInvalidData}) صفوف بسبب عدم توافق البيانات.");
+            _ = MyMessageService.ShowMessage($"تم أضافة ({AddedData}) صفوف بنجاح،\n" +
+              $"تم تخطي عدد ({skippedDueToExistence}) صفوف بسبب ان الكود موجود بالفعل،\n" +
+              $"وتم تخطي عدد ({skippedDueToInvalidData}) صفوف بسبب عدم توافق البيانات." , Brushes.LawnGreen);
             return true;
         }
         catch(Exception ex)
         {
-            MessageBox.Show("حدث خطأ أثناء معالجة الملف: " + ex.Message);
+            _ = MyMessageService.ShowMessage("حدث خطأ أثناء معالجة الملف: " + ex.Message , Brushes.IndianRed);
             return false;
         }
     }
@@ -269,17 +273,17 @@ public class ExcelHelper
                     continue;
                 }
 
-                //if(_databaseHelper.CheckIfIdExists("FinalNotes" , sapNo))
-                //{
-                //    skippedDueToExistence++;
-                //    continue;
-                //}
+                if(_databaseHelper.CheckIfIdExists("CentersCycle" , id))
+                {
+                    skippedDueToExistence++;
+                    continue;
+                }
 
                 var parameters = new Dictionary<string , object>
-                    {
-                        { "ID", id },
-                        { "ShortText", row.Cell(2).GetValue<string>() }
-                    };
+                {
+                    { "ID", id },
+                    { "ShortText", row.Cell(2).GetValue<string>() }
+                };
 
                 if(ValidateRow(parameters))
                 {
@@ -291,15 +295,14 @@ public class ExcelHelper
                     skippedDueToInvalidData++;
                 }
             }
-
-            MessageBox.Show($"تم أضافة ({AddedData}) صفوف بنجاح،\n" +
-                $"تم تخطي عدد ({skippedDueToExistence}) صفوف بسبب ان الكود موجود بالفعل،\n" +
-                $"وتم تخطي عدد ({skippedDueToInvalidData}) صفوف بسبب عدم توافق البيانات.");
+            _ = MyMessageService.ShowMessage($"تم أضافة ({AddedData}) صفوف بنجاح،\n" +
+               $"تم تخطي عدد ({skippedDueToExistence}) صفوف بسبب ان الكود موجود بالفعل،\n" +
+               $"وتم تخطي عدد ({skippedDueToInvalidData}) صفوف بسبب عدم توافق البيانات." , Brushes.LawnGreen);
             return true;
         }
         catch(Exception ex)
         {
-            MessageBox.Show("حدث خطأ أثناء معالجة الملف: " + ex.Message);
+            _ = MyMessageService.ShowMessage("حدث خطأ أثناء معالجة الملف: " + ex.Message , Brushes.IndianRed);
             return false;
         }
     }
@@ -333,7 +336,7 @@ public class ExcelHelper
                 }
 
                 var parameters = new Dictionary<string , object>
-                    { 
+                    {
                         { "MModels", mModels },
                         { "Part", row.Cell(2).GetValue<string>() },
                         { "DescriptionAR", row.Cell(3).GetValue<string>() }
@@ -341,7 +344,7 @@ public class ExcelHelper
 
                 if(ValidateRow(parameters))
                 {
-                   DatabaseHelper.InsertIntoTable("ModelsModels" , parameters);
+                    DatabaseHelper.InsertIntoTable("ModelsModels" , parameters);
                     AddedData++;
                 }
                 else
@@ -349,15 +352,14 @@ public class ExcelHelper
                     skippedDueToInvalidData++;
                 }
             }
-
-            MessageBox.Show($"تم أضافة ({AddedData}) صفوف بنجاح،\n" +
-               $"تم تخطي عدد ({skippedDueToExistence}) صفوف بسبب ان الكود موجود بالفعل،\n" +
-               $"وتم تخطي عدد ({skippedDueToInvalidData}) صفوف بسبب عدم توافق البيانات.");
+            _ = MyMessageService.ShowMessage($"تم أضافة ({AddedData}) صفوف بنجاح،\n" +
+              $"تم تخطي عدد ({skippedDueToExistence}) صفوف بسبب ان الكود موجود بالفعل،\n" +
+              $"وتم تخطي عدد ({skippedDueToInvalidData}) صفوف بسبب عدم توافق البيانات." , Brushes.LawnGreen);
             return true;
         }
         catch(Exception ex)
         {
-            MessageBox.Show("حدث خطأ أثناء معالجة الملف: " + ex.Message);
+            _ = MyMessageService.ShowMessage("حدث خطأ أثناء معالجة الملف: " + ex.Message , Brushes.IndianRed);
             return false;
         }
     }
